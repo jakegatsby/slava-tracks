@@ -1,0 +1,23 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    letter-spacing: 0.1rem;
+}
+
+.banner {
+    text-align: center;
+}
+
+header > hgroup > p {
+    font-size: 1.2rem !important;
+}
+
+.title {
+    margin-top: 1rem;
+    color: #facc65;
+    letter-spacing: 0.4rem;
+}
+
+.submit-track-button {
+    margin-top: 3rem;
+}

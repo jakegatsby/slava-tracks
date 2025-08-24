@@ -1,0 +1,77 @@
+<!doctype html>
+<html data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <title>SlavaTalent Playlist Recommendations</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.violet.min.css"
+    />
+    <link rel="stylesheet" href="/static/main.css" />
+  </head>
+  <body>
+    <div id="app">
+      <header class="container banner">
+        <hgroup>
+          <h1 class="title">SLAVATALENT</h1>
+          <p>Playlist Recommendations</p>
+        </hgroup>
+      </header>
+
+      <main class="container">
+        <section id="rec-form">
+          <form @submit.prevent="submitForm">
+            <fieldset>
+              <input type="text" name="track_title" placeholder="Track Title *" required />
+              <input type="text" name="artist" placeholder="Artist *" required />
+              <input type="text" name="streaming_link" placeholder="Streaming Link" />
+              <div v-for="(styleNames, category) in styles">
+                <legend >{{ category }}:</legend>
+                  <div v-for="styleName in styleNames" style="display: inline-block; margin-right: 1rem;">
+                    <input type="checkbox" id="{{ styleName }}" name="{{ styleName }}" />
+                    <label htmlFor="{{ styleName }}">{{ styleName }}</label>
+                  </div>
+              </div>
+
+              <button type="submit" class="submit-track-button">Submit</button>
+
+            </fieldset>
+          </form>
+        </section>
+      </main>
+    </div>
+
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script type="module">
+      import { createApp, ref } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js'
+
+      createApp({
+        data() {
+          return {
+            styles: [],
+            tracks: {},
+          }
+        },
+        methods: {
+          async getStyles() {
+            try {
+              const response = await axios.get('/styles/');
+              console.log(response.data);
+              this.styles = response.data;
+            } catch (error) {
+              console.error('Error fetching styles:', error);
+            }
+          },
+          submitForm() {
+            console.log("Form submitted!");
+          }
+        },
+        mounted() {
+          console.log("mounted!");
+          this.getStyles();
+        }
+      }).mount("#app");
+    </script>
+  </body>
+</html>
