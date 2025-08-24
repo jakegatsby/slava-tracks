@@ -1,17 +1,30 @@
+import json
+
 from typing import Annotated
 
 from fastapi import FastAPI, Form
 from fastapi.staticfiles import StaticFiles
 from starlette.requests import Request
 from starlette.responses import FileResponse
+from fastapi.responses import JSONResponse
 
 STYLES = {
-    "International Standard": [
-        "Waltz",
-        "Tango",
-        "Foxtrot",
-    ]
+    "argentinetango": "Argentine Tango",
+    "bachata": "Bachata",
+    "bolero": "Bolero",
+    "chacha": "Cha Cha",
+    "eastcoastswing": "East Coast Swing",
+    "foxtrot": "Foxtrot",
+    "hustle": "Hustle",
+    "rumba": "Rumba",
+    "salsa": "Salsa",
+    "samba": "Samba",
+    "tango": "Tango",
+    "viennesewaltz": "Viennese Waltz",
+    "waltz": "Waltz",
+    "westcoastswing": "West Coast Swing",
 }
+
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
