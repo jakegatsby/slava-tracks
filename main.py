@@ -16,11 +16,6 @@ async def read_index():
     return FileResponse("index.html")
 
 
-@app.get("/styles/")
-async def read_index():
-    return STYLES
-
-
 #@app.post("/tracks/")
 #async def create_track(track_title: Annotated[str, Form()], artist: Annotated[str, Form()], streaming_link: Annotated[str, Form()], styles:  Annotated[str, Form()]):
 #    print("FOO")

@@ -22,12 +22,31 @@
 
       <main class="container">
         <section id="rec-form">
-          <form @submit.prevent="submitForm">
+          <form @submit.prevent="addTrack">
             <fieldset>
-              <input type="text" v-model="formTrackTitle" name="track-title" placeholder="Track Title *" required />
-              <input type="text" v-model="formArtist" name="artist" placeholder="Artist *" required />
-              <input type="text" v-model="formStreamingLink" name="streaming-link" placeholder="Streaming Link" />
-              <button type="submit" class="submit-track-button">Submit</button>
+              <input type="text" v-model="trackTitleInput" name="track-title" placeholder="Track Title *" required />
+              <input type="text" v-model="artistInput" name="artist" placeholder="Artist *" required />
+              <input type="text" v-model="streamingLinkInput" name="streaming-link" placeholder="Streaming Link" />
+              <details class="dropdown">
+                <summary>
+                  Styles
+                </summary>
+                <ul>
+                  <li>
+                    <label>
+                      <input type="checkbox" v-model="argentineTangoCheckbox" name="argentine-tango" />
+                        Argentine Tango
+                    </label>
+                  </li>
+                  <li>
+                    <label>
+                      <input type="checkbox" v-model="bachataCheckbox" name="liquid" />
+                      Bachata
+                    </label>
+                  </li>
+                </ul>
+              </details>
+              <button type="submit" class="add-track-button">Add</button>
             </fieldset>
           </form>
         </section>
@@ -39,27 +58,28 @@
 
         createApp({
             setup() {
-                const formTrackTitle = ref(null);
-                const formArtist = ref(null);
-                const formStreamingLink = ref(null);
+                const trackTitleInput = ref(null);
+                const artistInput = ref(null);
+                const streamingLinkInput = ref(null);
+                const argentineTangoCheckbox = ref(null);
+                const bachataCheckbox = ref(null);
                 const data = ref(null);
 
-                const submitForm = async () => {
+                const addTrack = async () => {
                     try {
-                        const response = await axios.get('https://jsonplaceholder.typicode.com/todos/1'); // Example API endpoint
-                        data.value = response.data;
+                      console.log(argentineTangoCheckbox);
                     } catch (error) {
-                        console.error('Error fetching data:', error);
-                        data.value = 'Failed to fetch data.';
+                        console.error('Error adding track:', error);
                     }
                 };
 
                 return {
-                    formTrackTitle,
-                    formArtist,
-                    formStreamingLink,
-                    data,
-                    submitForm
+                  trackTitleInput,
+                  artistInput,
+                  streamingLinkInput,
+                  argentineTangoCheckbox,
+                  bachataCheckbox,
+                  addTrack
                 };
             }
         }).mount('#app');
