@@ -8,24 +8,6 @@ from starlette.requests import Request
 from starlette.responses import FileResponse
 from fastapi.responses import JSONResponse
 
-STYLES = {
-    "argentinetango": "Argentine Tango",
-    "bachata": "Bachata",
-    "bolero": "Bolero",
-    "chacha": "Cha Cha",
-    "eastcoastswing": "East Coast Swing",
-    "foxtrot": "Foxtrot",
-    "hustle": "Hustle",
-    "rumba": "Rumba",
-    "salsa": "Salsa",
-    "samba": "Samba",
-    "tango": "Tango",
-    "viennesewaltz": "Viennese Waltz",
-    "waltz": "Waltz",
-    "westcoastswing": "West Coast Swing",
-}
-
-
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 

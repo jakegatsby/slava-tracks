@@ -1,16 +1,17 @@
-<!doctype html>
-<html data-theme="dark">
-  <head>
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1" name="viewport" />
-    <title>SlavaTalent Playlist Recommendations</title>
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.violet.min.css"
-    />
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue.js & Axios CDN Starter</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.violet.min.css" />
     <link rel="stylesheet" href="/static/main.css" />
-  </head>
-  <body>
+    <!-- Include Vue.js from CDN -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- Include Axios from CDN -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
     <div id="app">
       <header class="container banner">
         <hgroup>
@@ -23,52 +24,45 @@
         <section id="rec-form">
           <form @submit.prevent="submitForm">
             <fieldset>
-              <input type="text" name="track_title" placeholder="Track Title *" required />
-              <input type="text" name="artist" placeholder="Artist *" required />
-              <input type="text" name="streaming_link" placeholder="Streaming Link" />
-              <div v-for="(styleName, styleKey, styleIndex) in styles" style="display: inline-block; margin-right: 1rem; margin-bottom: 1rem;">
-                <input type="checkbox" id="{{ styleKey }}" name="{{ styleKey }}" />
-                <label htmlFor="{{ styleKey }}">{{ styleName }}</label>
-              </div>
+              <input type="text" v-model="formTrackTitle" name="track-title" placeholder="Track Title *" required />
+              <input type="text" v-model="formArtist" name="artist" placeholder="Artist *" required />
+              <input type="text" v-model="formStreamingLink" name="streaming-link" placeholder="Streaming Link" />
               <button type="submit" class="submit-track-button">Submit</button>
-
             </fieldset>
           </form>
         </section>
       </main>
     </div>
 
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <script type="module">
-      import { createApp, ref } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js'
+    <script>
+        const { createApp, ref } = Vue;
 
-      createApp({
-        data() {
-          return {
-            styles: [],
-            tracks: {},
-          }
-        },
-        methods: {
-          async getStyles() {
-            try {
-              const response = await axios.get('/styles/');
-              console.log(response.data);
-              this.styles = response.data;
-              this.styles.sort();
-            } catch (error) {
-              console.error('Error fetching styles:', error);
+        createApp({
+            setup() {
+                const formTrackTitle = ref(null);
+                const formArtist = ref(null);
+                const formStreamingLink = ref(null);
+                const data = ref(null);
+
+                const submitForm = async () => {
+                    try {
+                        const response = await axios.get('https://jsonplaceholder.typicode.com/todos/1'); // Example API endpoint
+                        data.value = response.data;
+                    } catch (error) {
+                        console.error('Error fetching data:', error);
+                        data.value = 'Failed to fetch data.';
+                    }
+                };
+
+                return {
+                    formTrackTitle,
+                    formArtist,
+                    formStreamingLink,
+                    data,
+                    submitForm
+                };
             }
-          },
-          submitForm() {
-            console.log("Form submitted!");
-          }
-        },
-        mounted() {
-          console.log("mounted!");
-          this.getStyles();
-        }
-      }).mount("#app");
+        }).mount('#app');
     </script>
-  </body>
+</body>
 </html>

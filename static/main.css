@@ -1,15 +1,12 @@
 html, body {
     height: 100%;
     margin: 0;
+    font-size: 1.2rem !important;
     letter-spacing: 0.1rem;
 }
 
 .banner {
     text-align: center;
-}
-
-header > hgroup > p {
-    font-size: 1.2rem !important;
 }
 
 .title {

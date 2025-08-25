@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue.js & Axios CDN Starter</title>
+    <!-- Include Vue.js from CDN -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- Include Axios from CDN -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <div id="app">
+        <h1>{{ message }}</h1>
+        <button @click="fetchData">Fetch Data</button>
+        <p v-if="data">{{ data }}</p>
+        <p v-else>No data fetched yet.</p>
+    </div>
+
+    <script>
+        const { createApp, ref } = Vue;
+
+        createApp({
+            setup() {
+                const message = ref('Hello Vue with Axios!');
+                const data = ref(null);
+
+                const fetchData = async () => {
+                    try {
+                        const response = await axios.get('https://jsonplaceholder.typicode.com/todos/1'); // Example API endpoint
+                        data.value = response.data;
+                    } catch (error) {
+                        console.error('Error fetching data:', error);
+                        data.value = 'Failed to fetch data.';
+                    }
+                };
+
+                return {
+                    message,
+                    data,
+                    fetchData
+                };
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
