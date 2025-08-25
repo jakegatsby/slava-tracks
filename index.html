@@ -67,7 +67,13 @@
 
                 const addTrack = async () => {
                     try {
-                      console.log(argentineTangoCheckbox);
+                      const response = await axios.post('/tracks/', {
+                        trackTitle: trackTitleInput.value,
+                        artist: artistInput.value,
+                        streamingLink: streamingLinkInput.value,
+                        argentineTango: argentineTangoCheckbox.value,
+                        bachata: bachataCheckbox.value
+                      });
                     } catch (error) {
                         console.error('Error adding track:', error);
                     }

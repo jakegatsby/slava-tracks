@@ -23,5 +23,9 @@ async def read_index():
 
 @app.post("/tracks/")
 async def create_track(request: Request):
-    print("FOO")
+    try:
+        data = await request.json()
+        print(data)
+    except Exception as e:
+        print(e)
 
