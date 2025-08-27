@@ -12,5 +12,9 @@ beautify:
 ip:
 	ip -br -4 a
 
+postgres:
+	docker run --name slava-tracks-postgres -e POSTGRES_PASSWORD=mysecretpassword postgres
+
 dev: ip
 	./venv/bin/hypercorn main:app --reload
+

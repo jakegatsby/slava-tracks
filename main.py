@@ -1,4 +1,6 @@
 import json
+import logging
+import os
 
 from typing import Annotated
 
@@ -7,6 +9,15 @@ from fastapi.staticfiles import StaticFiles
 from starlette.requests import Request
 from starlette.responses import FileResponse
 from fastapi.responses import JSONResponse
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger()
+
+try:
+    DATABASE_URL = os.environ["DATABASE_URL"]
+    logger.info("Got DATABASE_URL")
+except KeyError:
+    logger.error("Unable to get DATABASE_URL")
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
