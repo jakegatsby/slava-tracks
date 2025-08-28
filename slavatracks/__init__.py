@@ -5,10 +5,11 @@ import os
 from datetime import datetime
 from typing import Annotated
 
+from psycopg.errors import UniqueViolation
 from flask import Flask, render_template, send_file, request, jsonify
-from sqlalchemy import create_engine, MetaData, Table, Column, Boolean, DateTime, Integer, String, select
+from sqlalchemy import create_engine, MetaData, Table, Column, Boolean, DateTime, Integer, String, select, UniqueConstraint
 from sqlalchemy.orm import sessionmaker, declarative_base
-
+from sqlalchemy.exc import IntegrityError
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
@@ -25,6 +26,9 @@ Session = sessionmaker(bind=engine)
 
 class Track(Base):
     __tablename__ = 'tracks'
+    __table_args__ = (
+        UniqueConstraint('title', 'artist', name='_title_artist_uc'),
+    )
     id = Column(Integer, primary_key=True)
     title = Column(String)
     artist = Column(String)
@@ -86,9 +90,8 @@ class Track(Base):
 
 Base.metadata.create_all(engine, checkfirst=True)
 
-def tracks_to_json():
-    with Session.begin() as session:
-        return jsonify(sorted([t.to_dict() for t in session.query(Track).all()], key=lambda x: x["timestamp"]))
+def tracks_to_json(session):
+    return jsonify(sorted([t.to_dict() for t in session.query(Track).all()], key=lambda x: x["timestamp"]))
 
 def create_app():
     app = Flask(__name__)
@@ -100,7 +103,7 @@ def create_app():
     @app.route("/tracks/")
     def get_tracks():
         with Session.begin() as session:
-            return tracks_to_json()
+            return tracks_to_json(session)
 
     @app.route("/tracks/", methods=["POST"])
     def add_track():
@@ -109,7 +112,16 @@ def create_app():
         track = Track(**data)
         with Session.begin() as session:
             session.add(track)
-            return tracks_to_json()
+            return tracks_to_json(session)
+
+    @app.errorhandler(Exception)
+    def handle_exception(e):
+        if isinstance(e, IntegrityError):
+            if isinstance(e.orig, UniqueViolation):
+                if "_title_artist_uc" in str(e.orig):
+                    return {
+                        "error": "UniqueViolation _title_artist_uc"
+                    }
 
     return app
 

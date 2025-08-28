@@ -81,6 +81,7 @@
                         argentine_tango: argentineTangoCheckbox.value,
                         bachata: bachataCheckbox.value
                       });
+                      console.log(response);
                       trackList.value = response.data;
                     } catch (error) {
                       console.error('Error adding track:', error);
