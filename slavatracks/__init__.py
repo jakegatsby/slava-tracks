@@ -16,7 +16,8 @@ logger = logging.getLogger()
 
 try:
     DATABASE_URL = os.environ["DATABASE_URL"]
-    logger.info("Got DATABASE_URL")
+    DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+psycopg://")
+    logger.info("DATABASE_URL modified for psycopg-3")
 except KeyError:
     logger.error("Unable to get DATABASE_URL")
 

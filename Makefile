@@ -16,7 +16,7 @@ postgres:
 	docker run --name slava-tracks-postgres -e POSTGRES_PASSWORD=mysecretpassword -p 5432:5432 postgres
 
 debug: ip
-	DATABASE_URL=postgresql+psycopg://postgres:mysecretpassword@localhost:5432/postgres ./venv/bin/flask --app slavatracks/ run --debug
-	
+	DATABASE_URL=postgresql://postgres:mysecretpassword@localhost:5432/postgres ./venv/bin/flask --app slavatracks/ run --debug
+
 run: ip
-	DATABASE_URL=postgresql+psycopg://postgres:mysecretpassword@localhost:5432/postgres ./venv/bin/gunicorn "slavatracks:create_app()"
+	DATABASE_URL=postgresql://postgres:mysecretpassword@localhost:5432/postgres ./venv/bin/gunicorn "slavatracks:create_app()"
