@@ -57,9 +57,38 @@ class Track(Base):
         return {
             "id": self.id,
             "title": self.title,
+            "artist": self.artist,
+            "streaming_link": self.streaming_link,
+            "timestamp": str(self.timestamp),
+            "argentine_tango": bool(self.argentine_tango),
+            "bachata": bool(self.bachata),
+            "bolero": bool(self.bolero),
+            "cha_cha": bool(self.cha_cha),
+            "east_coast_swing": bool(self.east_coast_swing),
+            "foxtrot": bool(self.foxtrot),
+            "hustle": bool(self.hustle),
+            "jive": bool(self.jive),
+            "lindy_hop": bool(self.lindy_hop),
+            "mambo": bool(self.mambo),
+            "merengue": bool(self.merengue),
+            "night_club_2_step": bool(self.night_club_2_step),
+            "paso_doble": bool(self.paso_doble),
+            "peabody": bool(self.peabody),
+            "quickstep": bool(self.quickstep),
+            "rumba": bool(self.rumba),
+            "salsa": bool(self.salsa),
+            "samba": bool(self.samba),
+            "tango": bool(self.tango),
+            "viennese_waltz": bool(self.viennese_waltz),
+            "waltz": bool(self.waltz),
+            "west_coast_swing": bool(self.west_coast_swing),
         }
 
 Base.metadata.create_all(engine, checkfirst=True)
+
+def tracks_to_json():
+    with Session.begin() as session:
+        return jsonify(sorted([t.to_dict() for t in session.query(Track).all()], key=lambda x: x["timestamp"]))
 
 def create_app():
     app = Flask(__name__)
@@ -71,15 +100,16 @@ def create_app():
     @app.route("/tracks/")
     def get_tracks():
         with Session.begin() as session:
-            return jsonify([t.to_dict() for t in session.query(Track).all()])
+            return tracks_to_json()
 
     @app.route("/tracks/", methods=["POST"])
     def add_track():
         data = request.json
+        data.update({'timestamp': datetime.now()})
         track = Track(**data)
         with Session.begin() as session:
             session.add(track)
-            return jsonify([t.to_dict() for t in session.query(Track).all()])
+            return tracks_to_json()
 
     return app
 

@@ -18,3 +18,13 @@ html, body {
 .submit-track-button {
     margin-top: 3rem;
 }
+
+.trackTitle {
+    color: #eee;
+    font-size: 1.4rem;
+}
+
+.trackArtist, .trackStreamingLink {
+    color: #aaa;
+    font-size: 1rem;
+}
