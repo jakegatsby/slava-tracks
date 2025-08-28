@@ -4,6 +4,6 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "uwsgi --http \"[::]:$PORT\" --master -p 4 -w slavatracks:app"
+    "startCommand": "gunicorn --bind \"[::]:$PORT\" \"slavatracks:create_app()\""
   }
 }
