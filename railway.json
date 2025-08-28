@@ -4,6 +4,6 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "hypercorn slavatracks:app --bind \"[::]:$PORT\""
+    "startCommand": "uwsgi --http \"[::]:$PORT\" --master -p 4 -w slavatracks:app"
   }
 }

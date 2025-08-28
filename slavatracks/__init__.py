@@ -24,6 +24,31 @@ engine = create_engine(DATABASE_URL)
 Base = declarative_base()
 Session = sessionmaker(bind=engine)
 
+STYLE_ATTRS = [
+    "argentine_tango",
+    "bachata",
+    "bolero",
+    "cha_cha",
+    "east_coast_swing",
+    "foxtrot",
+    "hustle",
+    "jive",
+    "lindy_hop",
+    "mambo",
+    "merengue",
+    "night_club_2_step",
+    "paso_doble",
+    "peabody",
+    "quickstep",
+    "rumba",
+    "salsa",
+    "samba",
+    "tango",
+    "viennese_waltz",
+    "waltz",
+    "west_coast_swing",
+]
+
 class Track(Base):
     __tablename__ = 'tracks'
     __table_args__ = (
@@ -34,28 +59,37 @@ class Track(Base):
     artist = Column(String)
     streaming_link = Column(String)
     timestamp = Column(DateTime)
-    argentine_tango = Column(Boolean)
-    bachata = Column(Boolean)
-    bolero = Column(Boolean)
-    cha_cha = Column(Boolean)
-    east_coast_swing = Column(Boolean)
-    foxtrot = Column(Boolean)
-    hustle = Column(Boolean)
-    jive = Column(Boolean)
-    lindy_hop = Column(Boolean)
-    mambo = Column(Boolean)
-    merengue = Column(Boolean)
-    night_club_2_step = Column(Boolean)
-    paso_doble = Column(Boolean)
-    peabody = Column(Boolean)
-    quickstep = Column(Boolean)
-    rumba = Column(Boolean)
-    salsa = Column(Boolean)
-    samba = Column(Boolean)
-    tango = Column(Boolean)
-    viennese_waltz = Column(Boolean)
-    waltz = Column(Boolean)
-    west_coast_swing = Column(Boolean)
+    argentine_tango = Column(Boolean, default=False)
+    bachata = Column(Boolean, default=False)
+    bolero = Column(Boolean, default=False)
+    cha_cha = Column(Boolean, default=False)
+    east_coast_swing = Column(Boolean, default=False)
+    foxtrot = Column(Boolean, default=False)
+    hustle = Column(Boolean, default=False)
+    jive = Column(Boolean, default=False)
+    lindy_hop = Column(Boolean, default=False)
+    mambo = Column(Boolean, default=False)
+    merengue = Column(Boolean, default=False)
+    night_club_2_step = Column(Boolean, default=False)
+    paso_doble = Column(Boolean, default=False)
+    peabody = Column(Boolean, default=False)
+    quickstep = Column(Boolean, default=False)
+    rumba = Column(Boolean, default=False)
+    salsa = Column(Boolean, default=False)
+    samba = Column(Boolean, default=False)
+    tango = Column(Boolean, default=False)
+    viennese_waltz = Column(Boolean, default=False)
+    waltz = Column(Boolean, default=False)
+    west_coast_swing = Column(Boolean, default=False)
+
+    def prettified_styles(self):
+        styles = []
+        for a in sorted(self.__dict__.keys()):
+            if a in STYLE_ATTRS:
+                if self.__dict__[a]:
+                    styles.append(a.replace("_", " ").title())
+        return ", ".join(styles)
+
 
     def to_dict(self):
         return {
@@ -64,6 +98,7 @@ class Track(Base):
             "artist": self.artist,
             "streaming_link": self.streaming_link,
             "timestamp": str(self.timestamp),
+            "prettified_styles": self.prettified_styles(),
             "argentine_tango": bool(self.argentine_tango),
             "bachata": bool(self.bachata),
             "bolero": bool(self.bolero),

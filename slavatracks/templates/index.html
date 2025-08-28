@@ -13,9 +13,9 @@
 </head>
 <body>
     <div id="app">
-      <header class="container banner">
+      <header class="container site-banner">
         <hgroup>
-          <h1 class="title">SLAVATALENT</h1>
+          <h1 class="site-title">SLAVATALENT</h1>
           <p>Playlist Recommendations</p>
         </hgroup>
       </header>
@@ -28,7 +28,7 @@
               <input type="text" v-model="artistInput" name="artist" placeholder="Artist *" required />
               <input type="text" v-model="streamingLinkInput" name="streaming-link" placeholder="Streaming Link" />
               <details class="dropdown">
-                <summary>
+                <summary class="styles-dropdown-summary">
                   Styles
                 </summary>
                 <ul>
@@ -51,10 +51,12 @@
           </form>
         </section>
         <section id="trackListSection">
-          <article v-for="track in trackList">
+          <article class="track-container" v-for="track in trackList">
             <div class="trackTitle">{{ track.title }}<div>
             <div class="trackArtist">{{ track.artist }}</div>
-            <div class="trackStreamingLink">{{ track.streaming_link }}</div>
+            <div class="trackStreamingLink"><a href="{{ track.streaming_link }}">{{ track.streaming_link }}</a></div>
+            <div class="trackPrettifiedStyles">Styles: {{ track.prettified_styles }}</div>
+            <div class="trackTimestamp">Added: {{ track.timestamp }}</div>
           </article>
         </section>
       </main>
@@ -82,7 +84,11 @@
                         bachata: bachataCheckbox.value
                       });
                       console.log(response);
-                      trackList.value = response.data;
+                      if ("error" in response.data) {
+                        console.log(response.data.error);
+                      } else {
+                        trackList.value = response.data;
+                      }
                     } catch (error) {
                       console.error('Error adding track:', error);
                     }

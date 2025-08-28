@@ -5,18 +5,29 @@ html, body {
     letter-spacing: 0.1rem;
 }
 
-.banner {
+.site-banner {
     text-align: center;
 }
 
-.title {
+.site-title {
     margin-top: 1rem;
     color: #facc65;
     letter-spacing: 0.4rem;
 }
 
+.styles-dropdown-summary {
+    font-size: 1rem;
+}
+
 .submit-track-button {
     margin-top: 3rem;
+}
+
+.track-container {
+    text-align: center;
+    margin-top: 1rem;
+    margin-bottom: 2rem;
+    border: 1px solid #333;
 }
 
 .trackTitle {
@@ -24,7 +35,12 @@ html, body {
     font-size: 1.4rem;
 }
 
-.trackArtist, .trackStreamingLink {
+.trackArtist {
+    color: #bbb;
+    font-size: 1.2rem;
+}
+
+.trackStreamingLink, .trackPrettifiedStyles, .trackTimestamp {
     color: #aaa;
     font-size: 1rem;
 }
