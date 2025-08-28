@@ -24,7 +24,7 @@
         <section id="rec-form">
           <form @submit.prevent="addTrack">
             <fieldset>
-              <input type="text" v-model="trackTitleInput" name="track-title" placeholder="Track Title *" required />
+              <input type="text" v-model="trackTitleInput" name="title" placeholder="Track Title *" required />
               <input type="text" v-model="artistInput" name="artist" placeholder="Artist *" required />
               <input type="text" v-model="streamingLinkInput" name="streaming-link" placeholder="Streaming Link" />
               <details class="dropdown">
@@ -68,10 +68,10 @@
                 const addTrack = async () => {
                     try {
                       const response = await axios.post('/tracks/', {
-                        trackTitle: trackTitleInput.value,
+                        title: trackTitleInput.value,
                         artist: artistInput.value,
-                        streamingLink: streamingLinkInput.value,
-                        argentineTango: argentineTangoCheckbox.value,
+                        streaming_link: streamingLinkInput.value,
+                        argentine_tango: argentineTangoCheckbox.value,
                         bachata: bachataCheckbox.value
                       });
                     } catch (error) {

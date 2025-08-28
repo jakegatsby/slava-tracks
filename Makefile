@@ -13,9 +13,8 @@ ip:
 	ip -br -4 a
 
 postgres:
-	export DATABASE_URL=postgresql://postgres:mysecretpassword@localhost:5432/postgres && \
 	docker run --name slava-tracks-postgres -e POSTGRES_PASSWORD=mysecretpassword -p 5432:5432 postgres
 
 dev: ip
-	./venv/bin/hypercorn main:app --reload
-
+	DATABASE_URL=postgresql+psycopg://postgres:mysecretpassword@localhost:5432/postgres ./venv/bin/flask --app slavatracks/ run --debug
+	
