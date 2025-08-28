@@ -79,7 +79,7 @@ def create_app():
         track = Track(**data)
         with Session.begin() as session:
             session.add(track)
-            return data
+            return jsonify([t.to_dict() for t in session.query(Track).all()])
 
     return app
 
