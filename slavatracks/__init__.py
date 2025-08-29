@@ -2,6 +2,11 @@ import json
 import logging
 import os
 
+import re
+
+import requests
+from bs4 import BeautifulSoup
+
 from datetime import datetime
 from typing import Annotated
 
@@ -13,6 +18,34 @@ from sqlalchemy.exc import IntegrityError
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
+
+def get_tidal_track_info(url):
+    r = requests.get(url)
+    soup = BeautifulSoup(r.content, "html.parser")
+    for meta in soup.find_all("meta"):
+        if not meta.get("content"):
+            continue
+        match = re.search("^Listen to (.*), a song by (.*) on your streaming service$", meta["content"])
+        if match:
+            title, artist = match.groups()[0], match.groups()[1]
+            return title, artist
+    logger.error(f"Unable to parse {url}")
+    return None, None
+
+def get_spotify_track_info(url):
+    r = requests.get(url)
+    soup = BeautifulSoup(r.content, "html.parser")
+    for title in soup.find_all("title"):
+        title = title.string
+        if title.endswith("| Spotify"):
+            match = re.search(r"^(.*) - song and lyrics by (.*) \| Spotify", title)
+            if match:
+                title, artist = match.groups()[0], match.groups()[1]
+                return title, artist
+    logger.error(f"Unable to parse {url}")
+    return None, None
+
+
 
 STYLE_ATTRS = [
     "argentine_tango",
@@ -164,7 +197,24 @@ def create_app():
     @app.route("/tracks/", methods=["POST"])
     def add_track():
         data = request.json
-        data.update({'timestamp': datetime.now()})
+        if data["streaming_link"].casefold().startswith("https://tidal.com"):
+            title, artist = get_tidal_track_info(data["streaming_link"])
+        elif data["streaming_link"].casefold().startswith("https://open.spotify.com"):
+            title, artist = get_spotify_track_info(data["streaming_link"])
+        else:
+            return {
+                "error": f"Unable to parse {data['streaming_link']}"
+            }
+
+        if not title:
+            return {
+                "error": f"Unable to parse {data['streaming_link']}"
+            }
+        data.update({
+            'title': title,
+            'artist': artist,
+            'timestamp': datetime.now()
+        })
         track = Track(**data)
         with Session.begin() as session:
             session.add(track)

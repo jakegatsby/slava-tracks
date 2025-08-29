@@ -23,9 +23,7 @@
         <section id="addTrackSection">
           <form @submit.prevent="addTrack">
             <fieldset>
-              <input type="text" v-model="trackTitleInput" name="title" placeholder="Track Title *" required />
-              <input type="text" v-model="artistInput" name="artist" placeholder="Artist *" required />
-              <input type="text" v-model="streamingLinkInput" name="streaming-link" placeholder="Streaming Link" />
+              <input type="text" v-model="streamingLinkInput" name="streaming-link" placeholder="Streaming Link" required/>
               <details class="dropdown">
                 <summary class="styles-dropdown-summary">
                   Styles
@@ -75,8 +73,6 @@
       const { createApp, ref, onMounted } = Vue;
       createApp({
           setup() {
-              const trackTitleInput = ref(null);
-              const artistInput = ref(null);
               const streamingLinkInput = ref(null);
               const trackList = ref([]);
               const argentineTangoCheckbox = ref(null);
@@ -105,8 +101,6 @@
               const addTrack = async () => {
                   try {
                     const response = await axios.post('/tracks/', {
-                      title: trackTitleInput.value,
-                      artist: artistInput.value,
                       streaming_link: streamingLinkInput.value,
                       argentine_tango: argentineTangoCheckbox.value,
                       bachata: bachataCheckbox.value,
@@ -159,8 +153,6 @@
               return {
                 addTrack,
                 trackList,
-                trackTitleInput,
-                artistInput,
                 streamingLinkInput,
                 argentineTangoCheckbox,
                 bachataCheckbox,
