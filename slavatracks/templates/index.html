@@ -78,9 +78,29 @@
               const trackTitleInput = ref(null);
               const artistInput = ref(null);
               const streamingLinkInput = ref(null);
+              const trackList = ref([]);
               const argentineTangoCheckbox = ref(null);
               const bachataCheckbox = ref(null);
-              const trackList = ref([]);
+              const boleroCheckbox = ref(null);
+              const chaChaCheckbox = ref(null);
+              const eastCoastSwingCheckbox = ref(null);
+              const foxtrotCheckbox = ref(null);
+              const hustleCheckbox = ref(null);
+              const jiveCheckbox = ref(null);
+              const lindyHopCheckbox = ref(null);
+              const mamboCheckbox = ref(null);
+              const merengueCheckbox = ref(null);
+              const nightClub2StepCheckbox = ref(null);
+              const pasoDobleCheckbox = ref(null);
+              const peabodyCheckbox = ref(null);
+              const quickstepCheckbox = ref(null);
+              const rumbaCheckbox = ref(null);
+              const salsaCheckbox = ref(null);
+              const sambaCheckbox = ref(null);
+              const tangoCheckbox = ref(null);
+              const vienneseWaltzCheckbox = ref(null);
+              const waltzCheckbox = ref(null);
+              const westCoastSwingCheckbox = ref(null);
 
               const addTrack = async () => {
                   try {
@@ -89,7 +109,27 @@
                       artist: artistInput.value,
                       streaming_link: streamingLinkInput.value,
                       argentine_tango: argentineTangoCheckbox.value,
-                      bachata: bachataCheckbox.value
+                      bachata: bachataCheckbox.value,
+                      bolero: boleroCheckbox.value,
+                      cha_cha: chaChaCheckbox.value,
+                      east_coast_swing: eastCoastSwingCheckbox.value,
+                      foxtrot: foxtrotCheckbox.value,
+                      hustle: hustleCheckbox.value,
+                      jive: jiveCheckbox.value,
+                      lindy_hop: lindyHopCheckbox.value,
+                      mambo: mamboCheckbox.value,
+                      merengue: merengueCheckbox.value,
+                      night_club_2_step: nightClub2StepCheckbox.value,
+                      paso_doble: pasoDobleCheckbox.value,
+                      peabody: peabodyCheckbox.value,
+                      quickstep: quickstepCheckbox.value,
+                      rumba: rumbaCheckbox.value,
+                      salsa: salsaCheckbox.value,
+                      samba: sambaCheckbox.value,
+                      tango: tangoCheckbox.value,
+                      viennese_waltz: vienneseWaltzCheckbox.value,
+                      waltz: waltzCheckbox.value,
+                      west_coast_swing: westCoastSwingCheckbox.value
                     });
                     console.log(response);
                     if ("error" in response.data) {
@@ -117,13 +157,33 @@
               });
 
               return {
+                addTrack,
+                trackList,
                 trackTitleInput,
                 artistInput,
                 streamingLinkInput,
                 argentineTangoCheckbox,
                 bachataCheckbox,
-                addTrack,
-                trackList
+                boleroCheckbox,
+                chaChaCheckbox,
+                eastCoastSwingCheckbox,
+                foxtrotCheckbox,
+                hustleCheckbox,
+                jiveCheckbox,
+                lindyHopCheckbox,
+                mamboCheckbox,
+                merengueCheckbox,
+                nightClub2StepCheckbox,
+                pasoDobleCheckbox,
+                peabodyCheckbox,
+                quickstepCheckbox,
+                rumbaCheckbox,
+                salsaCheckbox,
+                sambaCheckbox,
+                tangoCheckbox,
+                vienneseWaltzCheckbox,
+                waltzCheckbox,
+                westCoastSwingCheckbox
               };
           }
       }).mount('#app');

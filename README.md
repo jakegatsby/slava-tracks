@@ -24,3 +24,9 @@
 - Viennese Waltz
 - Waltz
 - West Coast Swing
+
+
+## TODO
+
+- clear form after submit
+- show error when add dupe

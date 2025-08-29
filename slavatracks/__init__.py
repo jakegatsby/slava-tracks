@@ -104,7 +104,8 @@ if DATABASE_URL:
                 if a in STYLE_ATTRS:
                     if self.__dict__[a]:
                         styles.append(a.replace("_", " ").title())
-            return ", ".join(styles)
+            prettified = ", ".join(styles)
+            return prettified
 
 
         def to_dict(self):
@@ -167,6 +168,7 @@ def create_app():
         track = Track(**data)
         with Session.begin() as session:
             session.add(track)
+            logger.info(f"Added {track.to_dict()}")
             return tracks_to_json(session)
 
     @app.errorhandler(Exception)
