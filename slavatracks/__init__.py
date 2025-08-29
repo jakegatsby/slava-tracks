@@ -17,6 +17,14 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
 
+def get_track_info_from_url(url):
+    if url.casefold().startswith("https://tidal.com"):
+        return get_tidal_track_info(url)
+    elif url.casefold().startswith("https://open.spotify.com"):
+        return get_spotify_track_info(url)
+    else:
+        return None, None
+
 
 def get_tidal_track_info(url):
     r = requests.get(url)
@@ -25,7 +33,7 @@ def get_tidal_track_info(url):
         if not meta.get("content"):
             continue
         match = re.search(
-            "^Listen to (.*), a song by (.*) on your streaming service$",
+            r"^Listen to (.*), a song by (.*) on your streaming service$",
             meta["content"],
         )
         if match:
@@ -211,13 +219,7 @@ def create_app():
     @app.route("/tracks/", methods=["POST"])
     def add_track():
         data = request.json
-        if data["streaming_link"].casefold().startswith("https://tidal.com"):
-            title, artist = get_tidal_track_info(data["streaming_link"])
-        elif data["streaming_link"].casefold().startswith("https://open.spotify.com"):
-            title, artist = get_spotify_track_info(data["streaming_link"])
-        else:
-            return {"error": f"Unable to parse {data['streaming_link']}"}
-
+        title, track = get_track_info_from_url(data['streaming_link'])
         if not title:
             return {"error": f"Unable to parse {data['streaming_link']}"}
         data.update({"title": title, "artist": artist, "timestamp": datetime.now()})
