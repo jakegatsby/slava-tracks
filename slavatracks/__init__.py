@@ -224,7 +224,7 @@ def create_app():
         data = request.json
         url, title, artist = get_track_info_from_url(data["streaming_link"])
         if not title:
-            return {"error": f"Unable to parse {data['streaming_link']}"}
+            return {"error": f"[ERROR] Could not determine track info from {data['streaming_link']}"}
         data.update({"streaming_link": url, "title": title, "artist": artist, "timestamp": datetime.now()})
         track = Track(**data)
         with Session.begin() as session:
@@ -237,6 +237,6 @@ def create_app():
         if isinstance(e, IntegrityError):
             if isinstance(e.orig, UniqueViolation):
                 if "_title_artist_uc" in str(e.orig):
-                    return {"error": "UniqueViolation _title_artist_uc"}
+                    return {"error": "[ERROR] This track has already been added"}
 
     return app

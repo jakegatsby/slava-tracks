@@ -17,13 +17,15 @@
     <div id="app">
       <header class="container site-banner">
         <hgroup>
-          <h1 class="site-title">SLAVATRACKS</h1>
+          <a href="/"><h1 class="site-title">SLAVATRACKS</h1></a>
           <p>SlavaTalent Playlist Recommendations</p>
         </hgroup>
       </header>
 
       <main class="container">
+
         <section id="addTrackSection">
+          <button v-if="errorMessage" @click="errorButtonClick" type="submit" class="error-message-button"><span style="float: right;font-weight: bold;">X</span>{{ errorMessage }}</button>
           <form @submit.prevent="addTrack">
             <fieldset>
               <input
@@ -288,6 +290,7 @@
       const { createApp, ref, onMounted } = Vue;
       createApp({
         setup() {
+          const errorMessage = ref(null);
           const streamingLinkInput = ref(null);
           const trackList = ref([]);
           const argentineTangoCheckbox = ref(null);
@@ -312,6 +315,10 @@
           const vienneseWaltzCheckbox = ref(null);
           const waltzCheckbox = ref(null);
           const westCoastSwingCheckbox = ref(null);
+
+          const errorButtonClick = () => {
+            location.reload();
+          }
 
           const addTrack = async () => {
             try {
@@ -343,11 +350,12 @@
               console.log(response);
               if ("error" in response.data) {
                 console.log(response.data.error);
+                errorMessage.value = response.data.error;
               } else {
                 location.reload();
               }
             } catch (error) {
-              console.error("Error adding track:", error);
+              console.error("Error adding track: ", error);
             }
           };
 
@@ -366,6 +374,8 @@
           });
 
           return {
+            errorMessage,
+            errorButtonClick,
             addTrack,
             trackList,
             streamingLinkInput,

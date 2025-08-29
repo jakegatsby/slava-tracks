@@ -31,6 +31,12 @@ a {
     font-size: 1rem;
 }
 
+.error-message-button {
+    color: #eee;
+    background: #f44336;
+}
+
+
 .add-track-button {
     margin-top: 1rem;
 }
