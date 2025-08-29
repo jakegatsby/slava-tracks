@@ -63,8 +63,8 @@
           <article class="track-container" v-for="track in trackList" data-aos="zoom-in-down" data-aos-anchor-placement="top-bottom" data-aos-duration="800">
             <div class="trackTitle">{{ track.title }}<div>
             <div class="trackArtist">{{ track.artist }}</div>
-            <div class="trackStreamingLink"><a :href="track.streaming_link">{{ track.streaming_link }}</a></div>
-            <div class="trackPrettifiedStyles">Styles: {{ track.prettified_styles }}</div>
+            <div v-if="track.streaming_link" class="trackStreamingLink"><a :href="track.streaming_link">{{ track.streaming_link }}</a></div>
+            <div v-if="track.prettified_styles" class="trackPrettifiedStyles">{{ track.prettified_styles }}</div>
             <div class="trackTimestamp">Added: {{ track.timestamp }}</div>
           </article>
         </section>

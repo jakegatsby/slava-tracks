@@ -6,11 +6,15 @@ html, body {
 }
 
 html {
-  background-image: url('/static/background.jpg');
-  background-repeat: no-repeat; /* Prevent the image from repeating */
-  background-attachment: fixed; /* Fix the image in the viewport */
-  background-position: center center; /* Center the image horizontally and vertically */
-  background-size: cover; /* Scale the image to cover the entire element */
+    background-image: url('/static/background.jpg');
+    background-repeat: no-repeat; /* Prevent the image from repeating */
+    background-attachment: fixed; /* Fix the image in the viewport */
+    background-position: center center; /* Center the image horizontally and vertically */
+    background-size: cover; /* Scale the image to cover the entire element */
+}
+
+a {
+    text-decoration: none;
 }
 
 .site-banner {
@@ -27,8 +31,8 @@ html {
     font-size: 1rem;
 }
 
-.submit-track-button {
-    margin-top: 3rem;
+.add-track-button {
+    margin-top: 1rem;
 }
 
 .track-container {

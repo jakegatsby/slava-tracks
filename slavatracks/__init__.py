@@ -65,8 +65,6 @@ if DATABASE_URL:
     Base = declarative_base()
     Session = sessionmaker(bind=engine)
 
-
-
     class Track(Base):
         __tablename__ = 'tracks'
         __table_args__ = (
@@ -144,7 +142,7 @@ if DATABASE_URL:
     Base.metadata.create_all(engine, checkfirst=True)
 
 def tracks_to_json(session):
-    return jsonify(sorted([t.to_dict() for t in session.query(Track).all()], key=lambda x: x["timestamp"]))
+    return jsonify(sorted([t.to_dict() for t in session.query(Track).all()], key=lambda x: x["timestamp"], reverse=True))
 
 def create_app():
     app = Flask(__name__)
