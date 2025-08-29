@@ -6,9 +6,8 @@
     <title>SlavaTalent Playlist Recommendations</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.violet.min.css" />
     <link rel="stylesheet" href="/static/main.css" />
-    <!-- Include Vue.js from CDN -->
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-    <!-- Include Axios from CDN -->
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 </head>
 <body>
@@ -51,66 +50,73 @@
           </form>
         </section>
         <section id="trackListSection">
-          <article class="track-container" v-for="track in trackList">
+          <article class="track-container" v-for="track in trackList" data-aos="zoom-in-down" data-aos-anchor-placement="top-bottom" data-aos-duration="800">
             <div class="trackTitle">{{ track.title }}<div>
             <div class="trackArtist">{{ track.artist }}</div>
-            <div class="trackStreamingLink"><a href="{{ track.streaming_link }}">{{ track.streaming_link }}</a></div>
+            <div class="trackStreamingLink"><a :href="track.streaming_link">{{ track.streaming_link }}</a></div>
             <div class="trackPrettifiedStyles">Styles: {{ track.prettified_styles }}</div>
             <div class="trackTimestamp">Added: {{ track.timestamp }}</div>
           </article>
         </section>
       </main>
     </div>
+  <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+  <script>
+      const { createApp, ref, onMounted } = Vue;
+      createApp({
+          setup() {
+              const trackTitleInput = ref(null);
+              const artistInput = ref(null);
+              const streamingLinkInput = ref(null);
+              const argentineTangoCheckbox = ref(null);
+              const bachataCheckbox = ref(null);
+              const trackList = ref([]);
 
-    <script>
-        const { createApp, ref, onMounted } = Vue;
-
-        createApp({
-            setup() {
-                const trackTitleInput = ref(null);
-                const artistInput = ref(null);
-                const streamingLinkInput = ref(null);
-                const argentineTangoCheckbox = ref(null);
-                const bachataCheckbox = ref(null);
-                const trackList = ref([]);
-
-                const addTrack = async () => {
-                    try {
-                      const response = await axios.post('/tracks/', {
-                        title: trackTitleInput.value,
-                        artist: artistInput.value,
-                        streaming_link: streamingLinkInput.value,
-                        argentine_tango: argentineTangoCheckbox.value,
-                        bachata: bachataCheckbox.value
-                      });
-                      console.log(response);
-                      if ("error" in response.data) {
-                        console.log(response.data.error);
-                      } else {
-                        trackList.value = response.data;
-                      }
-                    } catch (error) {
-                      console.error('Error adding track:', error);
+              const addTrack = async () => {
+                  try {
+                    const response = await axios.post('/tracks/', {
+                      title: trackTitleInput.value,
+                      artist: artistInput.value,
+                      streaming_link: streamingLinkInput.value,
+                      argentine_tango: argentineTangoCheckbox.value,
+                      bachata: bachataCheckbox.value
+                    });
+                    console.log(response);
+                    if ("error" in response.data) {
+                      console.log(response.data.error);
+                    } else {
+                      trackList.value = response.data;
                     }
-                };
+                  } catch (error) {
+                    console.error('Error adding track:', error);
+                  }
+              };
 
-                onMounted(async () => {
-                  console.log("MOUNTED");
-                  const response = await axios.get('/tracks/');
-                  trackList.value = response.data;
-                });
+              onMounted(async () => {
+                console.log("MOUNTED");
+                AOS.init({
+                  offset: 120, // offset (in px) from the original trigger point
+                  delay: 0, // values from 0 to 3000, with step 50ms
+                  duration: 400, // values from 0 to 3000, with step 50ms
+                  easing: 'ease', // default easing for AOS animations
+                  once: false, // whether animation should happen only once - while scrolling down
+                  anchorPlacement: 'top-bottom', // defines which position of the element regarding to window should trigger the animation
+                })
+                const response = await axios.get('/tracks/');
+                trackList.value = response.data;
+              });
 
-                return {
-                  trackTitleInput,
-                  artistInput,
-                  streamingLinkInput,
-                  argentineTangoCheckbox,
-                  bachataCheckbox,
-                  addTrack,
-                  trackList
-                };
-            }
-        }).mount('#app');
-    </script>
+              return {
+                trackTitleInput,
+                artistInput,
+                streamingLinkInput,
+                argentineTangoCheckbox,
+                bachataCheckbox,
+                addTrack,
+                trackList
+              };
+          }
+      }).mount('#app');
+  </script>
 </body>
 </html>

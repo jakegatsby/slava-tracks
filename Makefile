@@ -19,4 +19,4 @@ debug: ip
 	DATABASE_URL=postgresql://postgres:mysecretpassword@localhost:5432/postgres ./venv/bin/flask --app slavatracks/ run --debug
 
 run: ip
-	DATABASE_URL=postgresql://postgres:mysecretpassword@localhost:5432/postgres ./venv/bin/gunicorn "slavatracks:create_app()"
+	DATABASE_URL=postgresql://postgres:mysecretpassword@localhost:5432/postgres ./venv/bin/gunicorn --bind "[::]:5000" "slavatracks:create_app()"

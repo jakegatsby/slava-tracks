@@ -5,6 +5,14 @@ html, body {
     letter-spacing: 0.1rem;
 }
 
+html {
+  background-image: url('/static/background.jpg');
+  background-repeat: no-repeat; /* Prevent the image from repeating */
+  background-attachment: fixed; /* Fix the image in the viewport */
+  background-position: center center; /* Center the image horizontally and vertically */
+  background-size: cover; /* Scale the image to cover the entire element */
+}
+
 .site-banner {
     text-align: center;
 }
