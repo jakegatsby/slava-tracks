@@ -28,19 +28,24 @@ def get_track_info_from_url(url):
 
 
 def get_tidal_track_info(url):
-    url = url.replace("?u", "/u") if url.endswith("?u") else url
+    track_match = re.search(r".*track/([0-9]*).*", url)
+    if not track_match:
+        return None, None, None
+    track_id = track_match.groups()[0]
+    url = f"https://tidal.com/browse/track/{track_id}"
     logger.info(f"Parsing TIDAL URL: {url}")
     r = requests.get(url)
     soup = BeautifulSoup(r.content, "html.parser")
     for meta in soup.find_all("meta"):
-        if not meta.get("content"):
+        content = meta.get("content")
+        if not content:
             continue
         match = re.search(
-            r"^Listen to (.*), a song by (.*) on your streaming service$",
-            meta["content"],
+            r"^Listen to (.*), a song by (.*) on .*$",
+            content,
         )
         if match:
-            return url, match.groups()[0], match.groups()[1]
+            return f"{url}/u", match.groups()[0], match.groups()[1]
 
     logger.error(f"Unable to parse {url}")
     return None, None, None
