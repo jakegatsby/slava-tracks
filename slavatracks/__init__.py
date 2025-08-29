@@ -24,10 +24,11 @@ def get_track_info_from_url(url):
     elif url.casefold().startswith("https://open.spotify.com"):
         return get_spotify_track_info(url)
     else:
-        return None, None
+        return None, None, None
 
 
 def get_tidal_track_info(url):
+    url = url.replace("?u", "/u") if url.endswith("?u") else url
     logger.info(f"Parsing TIDAL URL: {url}")
     r = requests.get(url)
     soup = BeautifulSoup(r.content, "html.parser")
@@ -39,10 +40,10 @@ def get_tidal_track_info(url):
             meta["content"],
         )
         if match:
-            title, artist = match.groups()[0], match.groups()[1]
-            return title, artist
+            return url, match.groups()[0], match.groups()[1]
+
     logger.error(f"Unable to parse {url}")
-    return None, None
+    return None, None, None
 
 
 def get_spotify_track_info(url):
@@ -54,10 +55,9 @@ def get_spotify_track_info(url):
         if title.endswith("| Spotify"):
             match = re.search(r"^(.*) - song and lyrics by (.*) \| Spotify", title)
             if match:
-                title, artist = match.groups()[0], match.groups()[1]
-                return title, artist
+                return url, match.groups()[0], match.groups()[1]
     logger.error(f"Unable to parse {url}")
-    return None, None
+    return None, None, None
 
 
 STYLE_ATTRS = [
@@ -222,10 +222,10 @@ def create_app():
     @app.route("/tracks/", methods=["POST"])
     def add_track():
         data = request.json
-        title, artist = get_track_info_from_url(data["streaming_link"])
+        url, title, artist = get_track_info_from_url(data["streaming_link"])
         if not title:
             return {"error": f"Unable to parse {data['streaming_link']}"}
-        data.update({"title": title, "artist": artist, "timestamp": datetime.now()})
+        data.update({"streaming_link": url, "title": title, "artist": artist, "timestamp": datetime.now()})
         track = Track(**data)
         with Session.begin() as session:
             session.add(track)
