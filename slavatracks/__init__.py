@@ -32,7 +32,7 @@ def get_tidal_track_info(url):
     if not track_match:
         return None, None, None
     track_id = track_match.groups()[0]
-    url = f"https://tidal.com/browse/track/{track_id}"
+    url = f"https://tidal.com/browse/track/{track_id}/u"
     logger.info(f"Parsing TIDAL URL: {url}")
     r = requests.get(url)
     soup = BeautifulSoup(r.content, "html.parser")
@@ -45,7 +45,7 @@ def get_tidal_track_info(url):
             content,
         )
         if match:
-            return f"{url}/u", match.groups()[0], match.groups()[1]
+            return url, match.groups()[0], match.groups()[1]
 
     logger.error(f"Unable to parse {url}")
     return None, None, None
