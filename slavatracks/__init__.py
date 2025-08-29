@@ -47,7 +47,7 @@ def get_tidal_track_info(url):
         if match:
             return url, match.groups()[0], match.groups()[1]
 
-    logger.debug(str(soup)))
+    logger.debug(str(soup))
     logger.error(f"Unable to parse {url}")
     return url, None, None
 
