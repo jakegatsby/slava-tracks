@@ -4,10 +4,11 @@ venv:
 	python3 -m venv --clear venv
 	./venv/bin/python -m pip install -r requirements.txt
 
-beautify:
-	pnpm exec prettier ${PWD}/index.html --write
-	./venv/bin/isort main.py
-	./venv/bin/black main.py
+lint:
+	pnpm exec prettier ${PWD}/slavatracks/templates/index.html --write
+	./venv/bin/black slavatracks
+	./venv/bin/isort slavatracks/__init__.py
+	./venv/bin/pylint -E slavatracks
 
 ip:
 	ip -br -4 a

@@ -17,6 +17,7 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
 
+
 def get_track_info_from_url(url):
     if url.casefold().startswith("https://tidal.com"):
         return get_tidal_track_info(url)
@@ -27,6 +28,7 @@ def get_track_info_from_url(url):
 
 
 def get_tidal_track_info(url):
+    logger.info(f"Parsing TIDAL URL: {url}")
     r = requests.get(url)
     soup = BeautifulSoup(r.content, "html.parser")
     for meta in soup.find_all("meta"):
@@ -44,6 +46,7 @@ def get_tidal_track_info(url):
 
 
 def get_spotify_track_info(url):
+    logger.info(f"Parsing SPOTIFY URL: {url}")
     r = requests.get(url)
     soup = BeautifulSoup(r.content, "html.parser")
     for title in soup.find_all("title"):
@@ -219,7 +222,7 @@ def create_app():
     @app.route("/tracks/", methods=["POST"])
     def add_track():
         data = request.json
-        title, track = get_track_info_from_url(data['streaming_link'])
+        title, artist = get_track_info_from_url(data["streaming_link"])
         if not title:
             return {"error": f"Unable to parse {data['streaming_link']}"}
         data.update({"title": title, "artist": artist, "timestamp": datetime.now()})

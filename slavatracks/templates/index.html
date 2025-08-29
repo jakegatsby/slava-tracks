@@ -1,16 +1,19 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" data-theme="dark">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SLAVATRACKS</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.violet.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.violet.min.css"
+    />
     <link rel="stylesheet" href="/static/main.css" />
     <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-</head>
-<body>
+  </head>
+  <body>
     <div id="app">
       <header class="container site-banner">
         <hgroup>
@@ -23,34 +26,236 @@
         <section id="addTrackSection">
           <form @submit.prevent="addTrack">
             <fieldset>
-              <input type="text" v-model="streamingLinkInput" name="streaming-link" placeholder="Streaming Link" required/>
+              <input
+                type="text"
+                v-model="streamingLinkInput"
+                name="streaming-link"
+                placeholder="Streaming Link"
+                required
+              />
               <details class="dropdown">
-                <summary class="styles-dropdown-summary">
-                  Styles
-                </summary>
+                <summary class="styles-dropdown-summary">Styles</summary>
                 <ul>
-                  <li><label><input type="checkbox" v-model="argentineTangoCheckbox" name="argentine-tango" />Argentine Tango</label></li><li>
-                  <li><label><input type="checkbox" v-model="bachataCheckbox" name="bachata" />Bachata</label></li><li>
-                  <li><label><input type="checkbox" v-model="boleroCheckbox" name="bolero" />Bolero</label></li><li>
-                  <li><label><input type="checkbox" v-model="chaChaCheckbox" name="cha-cha" />Cha Cha</label></li><li>
-                  <li><label><input type="checkbox" v-model="eastCoastSwingCheckbox" name="east-coast-swing" />East Coast Swing</label></li><li>
-                  <li><label><input type="checkbox" v-model="foxtrotCheckbox" name="foxtrot" />Foxtrot</label></li><li>
-                  <li><label><input type="checkbox" v-model="hustleCheckbox" name="hustle" />Hustle</label></li><li>
-                  <li><label><input type="checkbox" v-model="jiveCheckbox" name="jive" />Jive</label></li><li>
-                  <li><label><input type="checkbox" v-model="lindyHopCheckbox" name="lindy-hop" />Lindy Hop</label></li><li>
-                  <li><label><input type="checkbox" v-model="mamboCheckbox" name="mambo" />Mambo</label></li><li>
-                  <li><label><input type="checkbox" v-model="merengueCheckbox" name="merengue" />Merengue</label></li><li>
-                  <li><label><input type="checkbox" v-model="nightClub2StepCheckbox" name="night-club-2-step" />Night Club 2 Step</label></li><li>
-                  <li><label><input type="checkbox" v-model="pasoDobleCheckbox" name="paso-doble" />Paso Doble</label></li><li>
-                  <li><label><input type="checkbox" v-model="peabodyCheckbox" name="peabody" />Peabody</label></li><li>
-                  <li><label><input type="checkbox" v-model="quickstepCheckbox" name="quickstep" />Quickstep</label></li><li>
-                  <li><label><input type="checkbox" v-model="rumbaCheckbox" name="rumba" />Rumba</label></li><li>
-                  <li><label><input type="checkbox" v-model="salsaCheckbox" name="salsa" />Salsa</label></li><li>
-                  <li><label><input type="checkbox" v-model="sambaCheckbox" name="samba" />Samba</label></li><li>
-                  <li><label><input type="checkbox" v-model="tangoCheckbox" name="tango" />Tango</label></li><li>
-                  <li><label><input type="checkbox" v-model="vienneseWaltzCheckbox" name="viennese-waltz" />Viennese Waltz</label></li><li>
-                  <li><label><input type="checkbox" v-model="waltzCheckbox" name="waltz" />Waltz</label></li><li>
-                  <li><label><input type="checkbox" v-model="westCoastSwingCheckbox" name="west-coast-swing" />West Coast Swing</label></li><li>
+                  <li>
+                    <label
+                      ><input
+                        type="checkbox"
+                        v-model="argentineTangoCheckbox"
+                        name="argentine-tango"
+                      />Argentine Tango</label
+                    >
+                  </li>
+                  <li></li>
+                  <li>
+                    <label
+                      ><input
+                        type="checkbox"
+                        v-model="bachataCheckbox"
+                        name="bachata"
+                      />Bachata</label
+                    >
+                  </li>
+                  <li></li>
+                  <li>
+                    <label
+                      ><input
+                        type="checkbox"
+                        v-model="boleroCheckbox"
+                        name="bolero"
+                      />Bolero</label
+                    >
+                  </li>
+                  <li></li>
+                  <li>
+                    <label
+                      ><input
+                        type="checkbox"
+                        v-model="chaChaCheckbox"
+                        name="cha-cha"
+                      />Cha Cha</label
+                    >
+                  </li>
+                  <li></li>
+                  <li>
+                    <label
+                      ><input
+                        type="checkbox"
+                        v-model="eastCoastSwingCheckbox"
+                        name="east-coast-swing"
+                      />East Coast Swing</label
+                    >
+                  </li>
+                  <li></li>
+                  <li>
+                    <label
+                      ><input
+                        type="checkbox"
+                        v-model="foxtrotCheckbox"
+                        name="foxtrot"
+                      />Foxtrot</label
+                    >
+                  </li>
+                  <li></li>
+                  <li>
+                    <label
+                      ><input
+                        type="checkbox"
+                        v-model="hustleCheckbox"
+                        name="hustle"
+                      />Hustle</label
+                    >
+                  </li>
+                  <li></li>
+                  <li>
+                    <label
+                      ><input
+                        type="checkbox"
+                        v-model="jiveCheckbox"
+                        name="jive"
+                      />Jive</label
+                    >
+                  </li>
+                  <li></li>
+                  <li>
+                    <label
+                      ><input
+                        type="checkbox"
+                        v-model="lindyHopCheckbox"
+                        name="lindy-hop"
+                      />Lindy Hop</label
+                    >
+                  </li>
+                  <li></li>
+                  <li>
+                    <label
+                      ><input
+                        type="checkbox"
+                        v-model="mamboCheckbox"
+                        name="mambo"
+                      />Mambo</label
+                    >
+                  </li>
+                  <li></li>
+                  <li>
+                    <label
+                      ><input
+                        type="checkbox"
+                        v-model="merengueCheckbox"
+                        name="merengue"
+                      />Merengue</label
+                    >
+                  </li>
+                  <li></li>
+                  <li>
+                    <label
+                      ><input
+                        type="checkbox"
+                        v-model="nightClub2StepCheckbox"
+                        name="night-club-2-step"
+                      />Night Club 2 Step</label
+                    >
+                  </li>
+                  <li></li>
+                  <li>
+                    <label
+                      ><input
+                        type="checkbox"
+                        v-model="pasoDobleCheckbox"
+                        name="paso-doble"
+                      />Paso Doble</label
+                    >
+                  </li>
+                  <li></li>
+                  <li>
+                    <label
+                      ><input
+                        type="checkbox"
+                        v-model="peabodyCheckbox"
+                        name="peabody"
+                      />Peabody</label
+                    >
+                  </li>
+                  <li></li>
+                  <li>
+                    <label
+                      ><input
+                        type="checkbox"
+                        v-model="quickstepCheckbox"
+                        name="quickstep"
+                      />Quickstep</label
+                    >
+                  </li>
+                  <li></li>
+                  <li>
+                    <label
+                      ><input
+                        type="checkbox"
+                        v-model="rumbaCheckbox"
+                        name="rumba"
+                      />Rumba</label
+                    >
+                  </li>
+                  <li></li>
+                  <li>
+                    <label
+                      ><input
+                        type="checkbox"
+                        v-model="salsaCheckbox"
+                        name="salsa"
+                      />Salsa</label
+                    >
+                  </li>
+                  <li></li>
+                  <li>
+                    <label
+                      ><input
+                        type="checkbox"
+                        v-model="sambaCheckbox"
+                        name="samba"
+                      />Samba</label
+                    >
+                  </li>
+                  <li></li>
+                  <li>
+                    <label
+                      ><input
+                        type="checkbox"
+                        v-model="tangoCheckbox"
+                        name="tango"
+                      />Tango</label
+                    >
+                  </li>
+                  <li></li>
+                  <li>
+                    <label
+                      ><input
+                        type="checkbox"
+                        v-model="vienneseWaltzCheckbox"
+                        name="viennese-waltz"
+                      />Viennese Waltz</label
+                    >
+                  </li>
+                  <li></li>
+                  <li>
+                    <label
+                      ><input
+                        type="checkbox"
+                        v-model="waltzCheckbox"
+                        name="waltz"
+                      />Waltz</label
+                    >
+                  </li>
+                  <li></li>
+                  <li>
+                    <label
+                      ><input
+                        type="checkbox"
+                        v-model="westCoastSwingCheckbox"
+                        name="west-coast-swing"
+                      />West Coast Swing</label
+                    >
+                  </li>
+                  <li></li>
                 </ul>
               </details>
               <button type="submit" class="add-track-button">Add</button>
@@ -58,127 +263,137 @@
           </form>
         </section>
         <section id="trackListSection">
-          <article class="track-container" v-for="track in trackList" data-aos="zoom-in-down" data-aos-anchor-placement="top-bottom" data-aos-duration="800">
-            <div class="trackTitle">{{ track.title }}<div>
+          <article
+            class="track-container"
+            v-for="track in trackList"
+            data-aos="zoom-in-down"
+            data-aos-anchor-placement="top-bottom"
+            data-aos-duration="800"
+          >
+            <div class="trackTitle">{{ track.title }}</div>
             <div class="trackArtist">{{ track.artist }}</div>
-            <div v-if="track.streaming_link" class="trackStreamingLink"><a :href="track.streaming_link">{{ track.streaming_link }}</a></div>
-            <div v-if="track.prettified_styles" class="trackPrettifiedStyles">{{ track.prettified_styles }}</div>
+            <div v-if="track.streaming_link" class="trackStreamingLink">
+              <a :href="track.streaming_link">{{ track.streaming_link }}</a>
+            </div>
+            <div v-if="track.prettified_styles" class="trackPrettifiedStyles">
+              {{ track.prettified_styles }}
+            </div>
             <div class="trackTimestamp">Added: {{ track.timestamp }}</div>
           </article>
         </section>
       </main>
     </div>
-  <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
-  <script>
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script>
       const { createApp, ref, onMounted } = Vue;
       createApp({
-          setup() {
-              const streamingLinkInput = ref(null);
-              const trackList = ref([]);
-              const argentineTangoCheckbox = ref(null);
-              const bachataCheckbox = ref(null);
-              const boleroCheckbox = ref(null);
-              const chaChaCheckbox = ref(null);
-              const eastCoastSwingCheckbox = ref(null);
-              const foxtrotCheckbox = ref(null);
-              const hustleCheckbox = ref(null);
-              const jiveCheckbox = ref(null);
-              const lindyHopCheckbox = ref(null);
-              const mamboCheckbox = ref(null);
-              const merengueCheckbox = ref(null);
-              const nightClub2StepCheckbox = ref(null);
-              const pasoDobleCheckbox = ref(null);
-              const peabodyCheckbox = ref(null);
-              const quickstepCheckbox = ref(null);
-              const rumbaCheckbox = ref(null);
-              const salsaCheckbox = ref(null);
-              const sambaCheckbox = ref(null);
-              const tangoCheckbox = ref(null);
-              const vienneseWaltzCheckbox = ref(null);
-              const waltzCheckbox = ref(null);
-              const westCoastSwingCheckbox = ref(null);
+        setup() {
+          const streamingLinkInput = ref(null);
+          const trackList = ref([]);
+          const argentineTangoCheckbox = ref(null);
+          const bachataCheckbox = ref(null);
+          const boleroCheckbox = ref(null);
+          const chaChaCheckbox = ref(null);
+          const eastCoastSwingCheckbox = ref(null);
+          const foxtrotCheckbox = ref(null);
+          const hustleCheckbox = ref(null);
+          const jiveCheckbox = ref(null);
+          const lindyHopCheckbox = ref(null);
+          const mamboCheckbox = ref(null);
+          const merengueCheckbox = ref(null);
+          const nightClub2StepCheckbox = ref(null);
+          const pasoDobleCheckbox = ref(null);
+          const peabodyCheckbox = ref(null);
+          const quickstepCheckbox = ref(null);
+          const rumbaCheckbox = ref(null);
+          const salsaCheckbox = ref(null);
+          const sambaCheckbox = ref(null);
+          const tangoCheckbox = ref(null);
+          const vienneseWaltzCheckbox = ref(null);
+          const waltzCheckbox = ref(null);
+          const westCoastSwingCheckbox = ref(null);
 
-              const addTrack = async () => {
-                  try {
-                    const response = await axios.post('/tracks/', {
-                      streaming_link: streamingLinkInput.value,
-                      argentine_tango: argentineTangoCheckbox.value,
-                      bachata: bachataCheckbox.value,
-                      bolero: boleroCheckbox.value,
-                      cha_cha: chaChaCheckbox.value,
-                      east_coast_swing: eastCoastSwingCheckbox.value,
-                      foxtrot: foxtrotCheckbox.value,
-                      hustle: hustleCheckbox.value,
-                      jive: jiveCheckbox.value,
-                      lindy_hop: lindyHopCheckbox.value,
-                      mambo: mamboCheckbox.value,
-                      merengue: merengueCheckbox.value,
-                      night_club_2_step: nightClub2StepCheckbox.value,
-                      paso_doble: pasoDobleCheckbox.value,
-                      peabody: peabodyCheckbox.value,
-                      quickstep: quickstepCheckbox.value,
-                      rumba: rumbaCheckbox.value,
-                      salsa: salsaCheckbox.value,
-                      samba: sambaCheckbox.value,
-                      tango: tangoCheckbox.value,
-                      viennese_waltz: vienneseWaltzCheckbox.value,
-                      waltz: waltzCheckbox.value,
-                      west_coast_swing: westCoastSwingCheckbox.value
-                    });
-                    console.log(response);
-                    if ("error" in response.data) {
-                      console.log(response.data.error);
-                    } else {
-                      location.reload();
-                    }
-                  } catch (error) {
-                    console.error('Error adding track:', error);
-                  }
-              };
-
-              onMounted(async () => {
-                console.log("MOUNTED");
-                AOS.init({
-                  offset: 120, // offset (in px) from the original trigger point
-                  delay: 0, // values from 0 to 3000, with step 50ms
-                  duration: 400, // values from 0 to 3000, with step 50ms
-                  easing: 'ease', // default easing for AOS animations
-                  once: false, // whether animation should happen only once - while scrolling down
-                  anchorPlacement: 'top-bottom', // defines which position of the element regarding to window should trigger the animation
-                })
-                const response = await axios.get('/tracks/');
-                trackList.value = response.data;
+          const addTrack = async () => {
+            try {
+              const response = await axios.post("/tracks/", {
+                streaming_link: streamingLinkInput.value,
+                argentine_tango: argentineTangoCheckbox.value,
+                bachata: bachataCheckbox.value,
+                bolero: boleroCheckbox.value,
+                cha_cha: chaChaCheckbox.value,
+                east_coast_swing: eastCoastSwingCheckbox.value,
+                foxtrot: foxtrotCheckbox.value,
+                hustle: hustleCheckbox.value,
+                jive: jiveCheckbox.value,
+                lindy_hop: lindyHopCheckbox.value,
+                mambo: mamboCheckbox.value,
+                merengue: merengueCheckbox.value,
+                night_club_2_step: nightClub2StepCheckbox.value,
+                paso_doble: pasoDobleCheckbox.value,
+                peabody: peabodyCheckbox.value,
+                quickstep: quickstepCheckbox.value,
+                rumba: rumbaCheckbox.value,
+                salsa: salsaCheckbox.value,
+                samba: sambaCheckbox.value,
+                tango: tangoCheckbox.value,
+                viennese_waltz: vienneseWaltzCheckbox.value,
+                waltz: waltzCheckbox.value,
+                west_coast_swing: westCoastSwingCheckbox.value,
               });
+              console.log(response);
+              if ("error" in response.data) {
+                console.log(response.data.error);
+              } else {
+                location.reload();
+              }
+            } catch (error) {
+              console.error("Error adding track:", error);
+            }
+          };
 
-              return {
-                addTrack,
-                trackList,
-                streamingLinkInput,
-                argentineTangoCheckbox,
-                bachataCheckbox,
-                boleroCheckbox,
-                chaChaCheckbox,
-                eastCoastSwingCheckbox,
-                foxtrotCheckbox,
-                hustleCheckbox,
-                jiveCheckbox,
-                lindyHopCheckbox,
-                mamboCheckbox,
-                merengueCheckbox,
-                nightClub2StepCheckbox,
-                pasoDobleCheckbox,
-                peabodyCheckbox,
-                quickstepCheckbox,
-                rumbaCheckbox,
-                salsaCheckbox,
-                sambaCheckbox,
-                tangoCheckbox,
-                vienneseWaltzCheckbox,
-                waltzCheckbox,
-                westCoastSwingCheckbox
-              };
-          }
-      }).mount('#app');
-  </script>
-</body>
+          onMounted(async () => {
+            console.log("MOUNTED");
+            AOS.init({
+              offset: 120, // offset (in px) from the original trigger point
+              delay: 0, // values from 0 to 3000, with step 50ms
+              duration: 400, // values from 0 to 3000, with step 50ms
+              easing: "ease", // default easing for AOS animations
+              once: false, // whether animation should happen only once - while scrolling down
+              anchorPlacement: "top-bottom", // defines which position of the element regarding to window should trigger the animation
+            });
+            const response = await axios.get("/tracks/");
+            trackList.value = response.data;
+          });
+
+          return {
+            addTrack,
+            trackList,
+            streamingLinkInput,
+            argentineTangoCheckbox,
+            bachataCheckbox,
+            boleroCheckbox,
+            chaChaCheckbox,
+            eastCoastSwingCheckbox,
+            foxtrotCheckbox,
+            hustleCheckbox,
+            jiveCheckbox,
+            lindyHopCheckbox,
+            mamboCheckbox,
+            merengueCheckbox,
+            nightClub2StepCheckbox,
+            pasoDobleCheckbox,
+            peabodyCheckbox,
+            quickstepCheckbox,
+            rumbaCheckbox,
+            salsaCheckbox,
+            sambaCheckbox,
+            tangoCheckbox,
+            vienneseWaltzCheckbox,
+            waltzCheckbox,
+            westCoastSwingCheckbox,
+          };
+        },
+      }).mount("#app");
+    </script>
+  </body>
 </html>
