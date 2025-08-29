@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SlavaTalent Playlist Recommendations</title>
+    <title>SLAVATRACKS</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.violet.min.css" />
     <link rel="stylesheet" href="/static/main.css" />
     <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
@@ -14,8 +14,8 @@
     <div id="app">
       <header class="container site-banner">
         <hgroup>
-          <h1 class="site-title">SLAVATALENT</h1>
-          <p>Playlist Recommendations</p>
+          <h1 class="site-title">SLAVATRACKS</h1>
+          <p>SlavaTalent Playlist Recommendations</p>
         </hgroup>
       </header>
 
@@ -135,7 +135,7 @@
                     if ("error" in response.data) {
                       console.log(response.data.error);
                     } else {
-                      trackList.value = response.data;
+                      location.reload();
                     }
                   } catch (error) {
                     console.error('Error adding track:', error);
