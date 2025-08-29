@@ -1,23 +1,22 @@
 import json
 import logging
 import os
-
 import re
-
-import requests
-from bs4 import BeautifulSoup
-
 from datetime import datetime
 from typing import Annotated
 
+import requests
+from bs4 import BeautifulSoup
+from flask import Flask, jsonify, render_template, request, send_file
 from psycopg.errors import UniqueViolation
-from flask import Flask, render_template, send_file, request, jsonify
-from sqlalchemy import create_engine, MetaData, Table, Column, Boolean, DateTime, Integer, String, select, UniqueConstraint
-from sqlalchemy.orm import sessionmaker, declarative_base
+from sqlalchemy import (Boolean, Column, DateTime, Integer, MetaData, String,
+                        Table, UniqueConstraint, create_engine, select)
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import declarative_base, sessionmaker
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
+
 
 def get_tidal_track_info(url):
     r = requests.get(url)
@@ -25,12 +24,16 @@ def get_tidal_track_info(url):
     for meta in soup.find_all("meta"):
         if not meta.get("content"):
             continue
-        match = re.search("^Listen to (.*), a song by (.*) on your streaming service$", meta["content"])
+        match = re.search(
+            "^Listen to (.*), a song by (.*) on your streaming service$",
+            meta["content"],
+        )
         if match:
             title, artist = match.groups()[0], match.groups()[1]
             return title, artist
     logger.error(f"Unable to parse {url}")
     return None, None
+
 
 def get_spotify_track_info(url):
     r = requests.get(url)
@@ -44,7 +47,6 @@ def get_spotify_track_info(url):
                 return title, artist
     logger.error(f"Unable to parse {url}")
     return None, None
-
 
 
 STYLE_ATTRS = [
@@ -72,18 +74,23 @@ STYLE_ATTRS = [
     "west_coast_swing",
 ]
 
+
 def style_attr_to_checkbox(s):
     s = s.replace("_", " ").title().replace(" ", "") + "Checkbox"
     return s[0].lower() + s[1:]
 
+
 def style_attr_to_input_name(s):
     return s.replace("_", "-")
+
 
 def style_attr_to_title(s):
     return s.replace("_", " ").title()
 
+
 def style_attr_to_details_li(s):
     return f'<li><label><input type="checkbox" v-model="{style_attr_to_checkbox(s)}" name="{style_attr_to_input_name(s)}" />{style_attr_to_title(s)}</label></li><li>'
+
 
 try:
     DATABASE_URL = os.environ["DATABASE_URL"]
@@ -99,10 +106,8 @@ if DATABASE_URL:
     Session = sessionmaker(bind=engine)
 
     class Track(Base):
-        __tablename__ = 'tracks'
-        __table_args__ = (
-            UniqueConstraint('title', 'artist', name='_title_artist_uc'),
-        )
+        __tablename__ = "tracks"
+        __table_args__ = (UniqueConstraint("title", "artist", name="_title_artist_uc"),)
         id = Column(Integer, primary_key=True)
         title = Column(String)
         artist = Column(String)
@@ -140,7 +145,6 @@ if DATABASE_URL:
             prettified = ", ".join(styles)
             return prettified
 
-
         def to_dict(self):
             return {
                 "id": self.id,
@@ -175,19 +179,29 @@ if DATABASE_URL:
 
     Base.metadata.create_all(engine, checkfirst=True)
 
+
 def tracks_to_json(session):
-    return jsonify(sorted([t.to_dict() for t in session.query(Track).all()], key=lambda x: x["timestamp"], reverse=True))
+    return jsonify(
+        sorted(
+            [t.to_dict() for t in session.query(Track).all()],
+            key=lambda x: x["timestamp"],
+            reverse=True,
+        )
+    )
+
 
 def create_app():
     app = Flask(__name__)
 
-    @app.route('/')
+    @app.route("/")
     def index():
-        return send_file('templates/index.html')  # no .j2 extension, so no jinja rendering here
+        return send_file(
+            "templates/index.html"
+        )  # no .j2 extension, so no jinja rendering here
 
-    @app.route('/favicon.ico')
+    @app.route("/favicon.ico")
     def favicon():
-        return send_file('static/favicon.ico')
+        return send_file("static/favicon.ico")
 
     @app.route("/tracks/")
     def get_tracks():
@@ -202,19 +216,11 @@ def create_app():
         elif data["streaming_link"].casefold().startswith("https://open.spotify.com"):
             title, artist = get_spotify_track_info(data["streaming_link"])
         else:
-            return {
-                "error": f"Unable to parse {data['streaming_link']}"
-            }
+            return {"error": f"Unable to parse {data['streaming_link']}"}
 
         if not title:
-            return {
-                "error": f"Unable to parse {data['streaming_link']}"
-            }
-        data.update({
-            'title': title,
-            'artist': artist,
-            'timestamp': datetime.now()
-        })
+            return {"error": f"Unable to parse {data['streaming_link']}"}
+        data.update({"title": title, "artist": artist, "timestamp": datetime.now()})
         track = Track(**data)
         with Session.begin() as session:
             session.add(track)
@@ -226,9 +232,6 @@ def create_app():
         if isinstance(e, IntegrityError):
             if isinstance(e.orig, UniqueViolation):
                 if "_title_artist_uc" in str(e.orig):
-                    return {
-                        "error": "UniqueViolation _title_artist_uc"
-                    }
+                    return {"error": "UniqueViolation _title_artist_uc"}
 
     return app
-
