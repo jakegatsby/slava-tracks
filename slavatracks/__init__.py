@@ -18,6 +18,15 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
 
+def get_url(url, attempts=5):
+    for i in range(attempts):
+        r = requests.get(url)
+        if r.status_code == 200:
+            return r
+        logger.error(f"{url} returned {r.status_code}...")
+        time.sleep(i+1)
+    return None
+
 
 def get_track_info_from_url(url):
     if url.casefold().startswith("https://tidal.com"):
@@ -35,11 +44,9 @@ def get_tidal_track_info(url):
     track_id = track_match.groups()[0]
     url = f"https://tidal.com/browse/track/{track_id}/u"
     logger.info(f"Parsing TIDAL URL: {url}")
-    r = requests.get(url)
-    if r.status_code == 404:
-        logger.error(f"{url} returned 404, will retry once")
-        time.sleep(1)
-        r = requests.get(url)
+    r = get_url(url)
+    if not r:
+        return url, None, None
     soup = BeautifulSoup(r.content, "html.parser")
     for meta in soup.find_all("meta"):
         content = meta.get("content")
@@ -59,7 +66,9 @@ def get_tidal_track_info(url):
 
 def get_spotify_track_info(url):
     logger.info(f"Parsing SPOTIFY URL: {url}")
-    r = requests.get(url)
+    r = get_url(url)
+    if not r:
+        return url, None, None
     soup = BeautifulSoup(r.content, "html.parser")
     for title in soup.find_all("title"):
         title = title.string
