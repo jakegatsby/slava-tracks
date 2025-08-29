@@ -2,6 +2,7 @@ import json
 import logging
 import os
 import re
+import time
 from datetime import datetime
 from typing import Annotated
 
@@ -14,7 +15,7 @@ from sqlalchemy import (Boolean, Column, DateTime, Integer, MetaData, String,
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import declarative_base, sessionmaker
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
 
 
@@ -35,6 +36,10 @@ def get_tidal_track_info(url):
     url = f"https://tidal.com/browse/track/{track_id}/u"
     logger.info(f"Parsing TIDAL URL: {url}")
     r = requests.get(url)
+    if r.status_code == 404:
+        logger.error(f"{url} returned 404, will retry once")
+        time.sleep(1)
+        r = requests.get(url)
     soup = BeautifulSoup(r.content, "html.parser")
     for meta in soup.find_all("meta"):
         content = meta.get("content")
@@ -47,7 +52,7 @@ def get_tidal_track_info(url):
         if match:
             return url, match.groups()[0], match.groups()[1]
 
-    logger.debug(str(soup))
+    #logger.debug(str(soup))
     logger.error(f"Unable to parse {url}")
     return url, None, None
 
