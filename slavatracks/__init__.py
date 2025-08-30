@@ -3,10 +3,12 @@ import logging
 import os
 import re
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Annotated
 
 import requests
+import spotipy
+from spotipy.oauth2 import SpotifyClientCredentials
 from bs4 import BeautifulSoup
 from flask import Flask, jsonify, render_template, request, send_file
 from psycopg.errors import UniqueViolation
@@ -18,66 +20,79 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
 
-def get_url(url, attempts=5):
-    for i in range(attempts):
-        r = requests.get(url)
-        if r.status_code == 200:
-            return r
-        logger.error(f"{url} returned {r.status_code}...")
-        time.sleep(i+1)
-    return None
+class StreamingPlatformNotSupported(Exception):
+    pass
 
+class TidalToken:
+    def __init__(self, access_token, type, expires):
+        self.access_token = access_token
+        self.expires = expires
+        self.type = type
 
-def get_track_info_from_url(url):
-    if url.casefold().startswith("https://tidal.com"):
-        return get_tidal_track_info(url)
-    elif url.casefold().startswith("https://open.spotify.com"):
-        return get_spotify_track_info(url)
-    else:
-        return None, None, None
+    def is_expired(self):
+        return datetime.now() > self.expires
 
+    def __repr__(self):
+        return f"TidalToken({self.access_token}, {self.type}, {self.expires})"
+
+def get_tidal_token():
+    client_id = os.getenv("TIDALCLIENTID")
+    secret = os.getenv("TIDALSECRET")
+    if not (client_id and secret):
+        return None
+    data = {"grant_type": "client_credentials"}
+    r = requests.post("https://auth.tidal.com/v1/oauth2/token", auth=(client_id, secret), data=data)
+    expires = datetime.now() + timedelta(seconds=r.json()["expires_in"]) - timedelta(minutes=5)
+    logger.info(f"Got new token expiring {expires}")
+    return TidalToken(
+        r.json()["access_token"],
+        r.json()["token_type"],
+        expires
+    )
+
+def tidal_api_request(url, token):
+    headers = {
+        "Authorization": f"Bearer {token.access_token}"
+    }
+    return requests.get(url, headers=headers)
 
 def get_tidal_track_info(url):
     track_match = re.search(r".*track/([0-9]*).*", url)
     if not track_match:
-        return None, None, None
+        raise StreamingPlatformNotSupported
     track_id = track_match.groups()[0]
-    url = f"https://tidal.com/browse/track/{track_id}/u"
-    logger.info(f"Parsing TIDAL URL: {url}")
-    r = get_url(url)
-    if not r:
-        return url, None, None
-    soup = BeautifulSoup(r.content, "html.parser")
-    for meta in soup.find_all("meta"):
-        content = meta.get("content")
-        if not content:
-            continue
-        match = re.search(
-            r"^Listen to (.*), a song by (.*) on .*$",
-            content,
-        )
-        if match:
-            return url, match.groups()[0], match.groups()[1]
+    logger.info(f"TIDAL Track ID: {track_id}")
+    token = get_tidal_token()
+    api_url = f"https://openapi.tidal.com/v2/tracks/{track_id}?include=artists&countryCode=CA"
+    track_info = tidal_api_request(api_url, token).json()
+    track_title = track_info["data"]["attributes"]["title"]
+    artists = []
+    for artist_id in (a["id"] for a in track_info["data"]["relationships"]["artists"]["data"]):
+        api_url = f"https://openapi.tidal.com/v2/artists/{artist_id}?countryCode=CA"
+        artist_info = tidal_api_request(api_url, token).json()
+        artists.append(artist_info["data"]["attributes"]["name"])
+    return track_title, ", ".join(artists), url
 
-    #logger.debug(str(soup))
-    logger.error(f"Unable to parse {url}")
-    return url, None, None
-
-
+# requires SPOTIPY_CLIENT_ID and SPOTIPY_CLIENT_SECRET env vars to be set
 def get_spotify_track_info(url):
-    logger.info(f"Parsing SPOTIFY URL: {url}")
-    r = get_url(url)
-    if not r:
-        return url, None, None
-    soup = BeautifulSoup(r.content, "html.parser")
-    for title in soup.find_all("title"):
-        title = title.string
-        if title.endswith("| Spotify"):
-            match = re.search(r"^(.*) - song and lyrics by (.*) \| Spotify", title)
-            if match:
-                return url, match.groups()[0], match.groups()[1]
-    logger.error(f"Unable to parse {url}")
-    return None, None, None
+    auth_manager = SpotifyClientCredentials()
+    sp = spotipy.Spotify(auth_manager=auth_manager)
+    track = sp.track(url)
+    new_url = track["external_urls"].get("spotify") or url
+    return track["name"], ", ".join((a["name"] for a in track["artists"])), url
+
+
+def track_from_request_data(data):
+    url = data["streaming_link"]
+    if url.casefold().startswith("https://tidal.com"):
+        title, artist, url = get_tidal_track_info(url)
+    if url.casefold().startswith("https://open.spotify.com"):
+        title, artist, url = get_spotify_track_info(url)
+    else:
+        raise StreamingPlatformNotSupported
+    logger.info(title, artist, url)
+    data.update({"streaming_link": url, "title": title, "artist": artist, "timestamp": datetime.now()})
+    return Track(**data)
 
 
 STYLE_ATTRS = [
@@ -242,11 +257,7 @@ def create_app():
     @app.route("/tracks/", methods=["POST"])
     def add_track():
         data = request.json
-        url, title, artist = get_track_info_from_url(data["streaming_link"])
-        if not title:
-            return {"error": f"[ERROR] Could not determine track info from {data['streaming_link']}"}
-        data.update({"streaming_link": url, "title": title, "artist": artist, "timestamp": datetime.now()})
-        track = Track(**data)
+        track = track_from_request_data(data)
         with Session.begin() as session:
             session.add(track)
             logger.info(f"Added {track.to_dict()}")
@@ -258,5 +269,7 @@ def create_app():
             if isinstance(e.orig, UniqueViolation):
                 if "_title_artist_uc" in str(e.orig):
                     return {"error": "[ERROR] This track has already been added"}
+        elif isinstance(e, StreamingPlatformNotSupported):
+            return {"error": "[ERROR] This streaming platform URL is not supported"}
 
     return app
