@@ -8,10 +8,10 @@ from typing import Annotated
 
 import requests
 import spotipy
-from spotipy.oauth2 import SpotifyClientCredentials
 from bs4 import BeautifulSoup
 from flask import Flask, jsonify, render_template, request, send_file
 from psycopg.errors import UniqueViolation
+from spotipy.oauth2 import SpotifyClientCredentials
 from sqlalchemy import (Boolean, Column, DateTime, Integer, MetaData, String,
                         Table, UniqueConstraint, create_engine, select)
 from sqlalchemy.exc import IntegrityError
@@ -20,8 +20,10 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger()
 
+
 class StreamingPlatformNotSupported(Exception):
     pass
+
 
 class TidalToken:
     def __init__(self, access_token, type, expires):
@@ -35,26 +37,29 @@ class TidalToken:
     def __repr__(self):
         return f"TidalToken({self.access_token}, {self.type}, {self.expires})"
 
+
 def get_tidal_token():
     client_id = os.getenv("TIDALCLIENTID")
     secret = os.getenv("TIDALSECRET")
     if not (client_id and secret):
         return None
     data = {"grant_type": "client_credentials"}
-    r = requests.post("https://auth.tidal.com/v1/oauth2/token", auth=(client_id, secret), data=data)
-    expires = datetime.now() + timedelta(seconds=r.json()["expires_in"]) - timedelta(minutes=5)
-    logger.info(f"Got new token expiring {expires}")
-    return TidalToken(
-        r.json()["access_token"],
-        r.json()["token_type"],
-        expires
+    r = requests.post(
+        "https://auth.tidal.com/v1/oauth2/token", auth=(client_id, secret), data=data
     )
+    expires = (
+        datetime.now()
+        + timedelta(seconds=r.json()["expires_in"])
+        - timedelta(minutes=5)
+    )
+    logger.info(f"Got new token expiring {expires}")
+    return TidalToken(r.json()["access_token"], r.json()["token_type"], expires)
+
 
 def tidal_api_request(url, token):
-    headers = {
-        "Authorization": f"Bearer {token.access_token}"
-    }
+    headers = {"Authorization": f"Bearer {token.access_token}"}
     return requests.get(url, headers=headers)
+
 
 def get_tidal_track_info(url):
     track_match = re.search(r".*track/([0-9]*).*", url)
@@ -63,16 +68,21 @@ def get_tidal_track_info(url):
     track_id = track_match.groups()[0]
     logger.info(f"TIDAL Track ID: {track_id}")
     token = get_tidal_token()
-    api_url = f"https://openapi.tidal.com/v2/tracks/{track_id}?include=artists&countryCode=CA"
+    api_url = (
+        f"https://openapi.tidal.com/v2/tracks/{track_id}?include=artists&countryCode=CA"
+    )
     track_info = tidal_api_request(api_url, token).json()
     track_title = track_info["data"]["attributes"]["title"]
     artists = []
-    for artist_id in (a["id"] for a in track_info["data"]["relationships"]["artists"]["data"]):
+    for artist_id in (
+        a["id"] for a in track_info["data"]["relationships"]["artists"]["data"]
+    ):
         api_url = f"https://openapi.tidal.com/v2/artists/{artist_id}?countryCode=CA"
         artist_info = tidal_api_request(api_url, token).json()
         artists.append(artist_info["data"]["attributes"]["name"])
     artist_str = ", ".join(artists)
     return track_title, artist_str, url
+
 
 def get_spotify_track_info(url):
     auth_manager = SpotifyClientCredentials()
@@ -90,8 +100,15 @@ def track_from_request_data(data):
         title, artist, url = get_spotify_track_info(url)
     else:
         raise StreamingPlatformNotSupported
-    logger.info(title, artist, url)
-    data.update({"streaming_link": url, "title": title, "artist": artist, "timestamp": datetime.now()})
+    logger.info(f"{title}, {artist}, {url}")
+    data.update(
+        {
+            "streaming_link": url,
+            "title": title,
+            "artist": artist,
+            "timestamp": datetime.now(),
+        }
+    )
     return Track(**data)
 
 
