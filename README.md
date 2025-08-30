@@ -1,5 +1,13 @@
 # SlavaTalent Playlist Recommendations
 
+## Env Vars
+
+- DATABASE_URL
+- TIDALCLIENTID
+- TIDALSECRET
+- SPOTIPY_CLIENT_ID
+- SPOTIPY_CLIENT_SECRET
+
 ## Styles
 
 - Argentine Tango

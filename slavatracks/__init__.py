@@ -17,7 +17,7 @@ from sqlalchemy import (Boolean, Column, DateTime, Integer, MetaData, String,
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import declarative_base, sessionmaker
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger()
 
 class StreamingPlatformNotSupported(Exception):
@@ -71,9 +71,9 @@ def get_tidal_track_info(url):
         api_url = f"https://openapi.tidal.com/v2/artists/{artist_id}?countryCode=CA"
         artist_info = tidal_api_request(api_url, token).json()
         artists.append(artist_info["data"]["attributes"]["name"])
-    return track_title, ", ".join(artists), url
+    artist_str = ", ".join(artists)
+    return track_title, artist_str, url
 
-# requires SPOTIPY_CLIENT_ID and SPOTIPY_CLIENT_SECRET env vars to be set
 def get_spotify_track_info(url):
     auth_manager = SpotifyClientCredentials()
     sp = spotipy.Spotify(auth_manager=auth_manager)
@@ -86,7 +86,7 @@ def track_from_request_data(data):
     url = data["streaming_link"]
     if url.casefold().startswith("https://tidal.com"):
         title, artist, url = get_tidal_track_info(url)
-    if url.casefold().startswith("https://open.spotify.com"):
+    elif url.casefold().startswith("https://open.spotify.com"):
         title, artist, url = get_spotify_track_info(url)
     else:
         raise StreamingPlatformNotSupported
@@ -265,6 +265,7 @@ def create_app():
 
     @app.errorhandler(Exception)
     def handle_exception(e):
+        logger.error(e)
         if isinstance(e, IntegrityError):
             if isinstance(e.orig, UniqueViolation):
                 if "_title_artist_uc" in str(e.orig):
