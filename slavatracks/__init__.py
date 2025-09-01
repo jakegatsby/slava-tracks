@@ -286,8 +286,8 @@ def create_app():
         if isinstance(e, IntegrityError):
             if isinstance(e.orig, UniqueViolation):
                 if "_title_artist_uc" in str(e.orig):
-                    return {"error": "[ERROR] This track has already been added"}
+                    return {"error": "This track has already been added"}
         elif isinstance(e, StreamingPlatformNotSupported):
-            return {"error": "[ERROR] This streaming platform URL is not supported"}
+            return {"error": "This streaming platform URL is not supported"}
 
     return app

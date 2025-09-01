@@ -24,16 +24,12 @@
           <button @click="openAddTrackModal" >Add a new track</button>
         </div>
         <dialog id="error-modal-dialog">
-          <article>
-            <header>
-              ERROR
-            </header>
-            <p>
+          <article id="error-modal-article">
+            <div style="text-align: center; color: black;">ERROR</div>
+            <p style="text-align: center; color: black;">
               {{ errorMessage }}
             </p>
-            <footer>
-              <button @click="closeErrorModal" class="secondary">Close</button>
-            </footer>
+            <button @click="closeErrorModal" class="secondary">Close</button>
           </article>
         </dialog>
         <dialog id="add-track-modal-dialog">
@@ -41,7 +37,7 @@
             <header>
               <button @click="closeAddTrackModal"class="secondary" style="float: right">Cancel</button>
             </header>
-            <form>
+            <form @submit.prevent="addTrack">
               <input type="text" v-model="streamingLinkInput" name="streaming-link" placeholder="Streaming Link" required />
               <details class="dropdown">
                 <summary class="styles-dropdown-summary">Styles</summary>
@@ -114,10 +110,8 @@
                   </li>
                 </ul>
               </details>
+              <button type="submit" id="add-track-button" class="add-track-button" style="float: right;">Add Track</button>
             </form>
-            <footer>
-              <button @click="addTrack" type="submit" id="add-track-button" class="add-track-button" style="float: right;">Add Track</button>
-            </footer>
           </article>
         </dialog>
         <section id="trackListSection">

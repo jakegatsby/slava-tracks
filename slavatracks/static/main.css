@@ -27,6 +27,11 @@ a {
     letter-spacing: 0.4rem;
 }
 
+#error-modal-article {
+    background-color: rgb(209, 104, 104);
+    color: black;
+}
+
 .open-add-track-modal-button-container {
     text-align: center;
 }
