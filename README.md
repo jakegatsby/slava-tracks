@@ -37,4 +37,5 @@
 ## TODO
 
 - show error when add dupe
-- remove url params from spotify links
+- remove url params from spotify links and tidal
+- put add button on top so after selecting style and scrolling back up, the button is there, put cancel at bottom
