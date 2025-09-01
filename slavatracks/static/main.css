@@ -28,8 +28,8 @@ a {
 }
 
 #error-modal-article {
-    background-color: rgb(209, 104, 104);
-    color: black;
+    background-color :#f8d7da;
+    color: #721c24;
 }
 
 .open-add-track-modal-button-container {
