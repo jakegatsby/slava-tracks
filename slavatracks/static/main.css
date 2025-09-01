@@ -12,13 +12,13 @@ html {
     background-position: center center; /* Center the image horizontally and vertically */
     background-size: cover; /* Scale the image to cover the entire element */
 }
-
 a {
     text-decoration: none;
 }
 
 .site-banner {
     text-align: center;
+    margin-bottom: 4rem;
 }
 
 .site-title {
@@ -34,11 +34,6 @@ a {
 .error-message-button {
     color: #eee;
     background: #f44336;
-}
-
-
-.add-track-button {
-    margin-top: 1rem;
 }
 
 .track-container {
@@ -61,4 +56,26 @@ a {
 .trackStreamingLink, .trackPrettifiedStyles, .trackTimestamp {
     color: #aaa;
     font-size: 1rem;
+}
+
+dialog[open] { /* Target the open dialog element */
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none; /* Override Pico's max-width for modals */
+  margin: 0; /* Remove default margins */
+  padding: 0; /* Remove default padding from the dialog itself */
+}
+
+dialog[open] article { /* Target the content inside the dialog */
+  width: 100%;
+  height: 100%;
+  margin: 0; /* Remove default margins from the article content */
+  padding: var(--pico-spacing); /* Keep Pico's default content padding if desired */
+  display: flex; /* Use flexbox for content layout within the full screen */
+  flex-direction: column;
 }

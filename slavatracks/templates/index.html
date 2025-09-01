@@ -20,10 +20,17 @@
       </header>
 
       <main class="container">
-        <section id="addTrackSection">
-          <button v-if="errorMessage" @click="errorButtonClick" type="submit" class="error-message-button"><span style="float: right; font-weight: bold">X</span>{{ errorMessage }}</button>
-          <form @submit.prevent="addTrack">
-            <fieldset>
+        <div>
+          <button @click="openAddTrackModal">Add a new track</button>
+        </div>
+        <dialog id="add-track-modal-dialog">
+          <article>
+            <header>
+              <button @click="addTrack" id="add-track-button" class="add-track-button" style="float: right;">Add Track</button>
+              <button @click="closeAddTrackModal" class="secondary">Cancel</button>
+            </header>
+            <button v-if="errorMessage" @click="errorButtonClick" type="submit" class="error-message-button"><span style="float: right; font-weight: bold">X</span>{{ errorMessage }}</button>
+            <form>
               <input type="text" v-model="streamingLinkInput" name="streaming-link" placeholder="Streaming Link" required />
               <details class="dropdown">
                 <summary class="styles-dropdown-summary">Styles</summary>
@@ -96,10 +103,9 @@
                   </li>
                 </ul>
               </details>
-              <button type="submit" class="add-track-button">Add</button>
-            </fieldset>
-          </form>
-        </section>
+            </form>
+          </article>
+        </dialog>
         <section id="trackListSection">
           <article class="track-container" v-for="track in trackList" data-aos="zoom-in-down" data-aos-anchor-placement="top-bottom" data-aos-duration="800">
             <div class="trackTitle">{{ track.title }}</div>
@@ -163,6 +169,21 @@
             }
           };
 
+          const openAddTrackModal = () => {
+            const modal = document.getElementById("add-track-modal-dialog");
+            modal.showModal();
+          }
+
+          const closeAddTrackModal = () => {
+            const modal = document.getElementById("add-track-modal-dialog");
+            modal.close();
+          }
+
+          const getTracks = async () => {
+            const response = await axios.get("/tracks/");
+            trackList.value = response.data;
+          }
+
           onMounted(async () => {
             console.log("MOUNTED");
             AOS.init({
@@ -173,11 +194,10 @@
               once: false, // whether animation should happen only once - while scrolling down
               anchorPlacement: "top-bottom", // defines which position of the element regarding to window should trigger the animation
             });
-            const response = await axios.get("/tracks/");
-            trackList.value = response.data;
+            getTracks();
           });
 
-          return { errorMessage, errorButtonClick, addTrack, trackList, streamingLinkInput, argentineTangoCheckbox, bachataCheckbox, boleroCheckbox, chaChaCheckbox, eastCoastSwingCheckbox, foxtrotCheckbox, hustleCheckbox, jiveCheckbox, lindyHopCheckbox, mamboCheckbox, merengueCheckbox, nightClub2StepCheckbox, pasoDobleCheckbox, peabodyCheckbox, quickstepCheckbox, rumbaCheckbox, salsaCheckbox, sambaCheckbox, tangoCheckbox, vienneseWaltzCheckbox, waltzCheckbox, westCoastSwingCheckbox };
+          return { errorMessage, getTracks, errorButtonClick, openAddTrackModal, closeAddTrackModal, addTrack, trackList, streamingLinkInput, argentineTangoCheckbox, bachataCheckbox, boleroCheckbox, chaChaCheckbox, eastCoastSwingCheckbox, foxtrotCheckbox, hustleCheckbox, jiveCheckbox, lindyHopCheckbox, mamboCheckbox, merengueCheckbox, nightClub2StepCheckbox, pasoDobleCheckbox, peabodyCheckbox, quickstepCheckbox, rumbaCheckbox, salsaCheckbox, sambaCheckbox, tangoCheckbox, vienneseWaltzCheckbox, waltzCheckbox, westCoastSwingCheckbox };
         },
       }).mount("#app");
     </script>

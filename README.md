@@ -37,3 +37,4 @@
 ## TODO
 
 - show error when add dupe
+- remove url params from spotify links
