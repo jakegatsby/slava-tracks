@@ -20,16 +20,27 @@
       </header>
 
       <main class="container">
-        <div>
-          <button @click="openAddTrackModal">Add a new track</button>
+        <div class="open-add-track-modal-button-container">
+          <button @click="openAddTrackModal" >Add a new track</button>
         </div>
+        <dialog id="error-modal-dialog">
+          <article>
+            <header>
+              ERROR
+            </header>
+            <p>
+              {{ errorMessage }}
+            </p>
+            <footer>
+              <button @click="closeErrorModal" class="secondary">Close</button>
+            </footer>
+          </article>
+        </dialog>
         <dialog id="add-track-modal-dialog">
           <article>
             <header>
-              <button @click="addTrack" id="add-track-button" class="add-track-button" style="float: right;">Add Track</button>
-              <button @click="closeAddTrackModal" class="secondary">Cancel</button>
+              <button @click="closeAddTrackModal"class="secondary" style="float: right">Cancel</button>
             </header>
-            <button v-if="errorMessage" @click="errorButtonClick" type="submit" class="error-message-button"><span style="float: right; font-weight: bold">X</span>{{ errorMessage }}</button>
             <form>
               <input type="text" v-model="streamingLinkInput" name="streaming-link" placeholder="Streaming Link" required />
               <details class="dropdown">
@@ -104,6 +115,9 @@
                 </ul>
               </details>
             </form>
+            <footer>
+              <button @click="addTrack" type="submit" id="add-track-button" class="add-track-button" style="float: right;">Add Track</button>
+            </footer>
           </article>
         </dialog>
         <section id="trackListSection">
@@ -155,16 +169,20 @@
           };
 
           const addTrack = async () => {
+            closeAddTrackModal();
             try {
               const response = await axios.post("/tracks/", { streaming_link: streamingLinkInput.value, argentine_tango: argentineTangoCheckbox.value, bachata: bachataCheckbox.value, bolero: boleroCheckbox.value, cha_cha: chaChaCheckbox.value, east_coast_swing: eastCoastSwingCheckbox.value, foxtrot: foxtrotCheckbox.value, hustle: hustleCheckbox.value, jive: jiveCheckbox.value, lindy_hop: lindyHopCheckbox.value, mambo: mamboCheckbox.value, merengue: merengueCheckbox.value, night_club_2_step: nightClub2StepCheckbox.value, paso_doble: pasoDobleCheckbox.value, peabody: peabodyCheckbox.value, quickstep: quickstepCheckbox.value, rumba: rumbaCheckbox.value, salsa: salsaCheckbox.value, samba: sambaCheckbox.value, tango: tangoCheckbox.value, viennese_waltz: vienneseWaltzCheckbox.value, waltz: waltzCheckbox.value, west_coast_swing: westCoastSwingCheckbox.value });
               console.log(response);
               if ("error" in response.data) {
                 console.log(response.data.error);
                 errorMessage.value = response.data.error;
+                openErrorModal();
               } else {
                 location.reload();
               }
             } catch (error) {
+              errorMessage.value = "[ERROR] Unknown error occured";
+              openErrorModal();
               console.error("Error adding track: ", error);
             }
           };
@@ -177,6 +195,15 @@
           const closeAddTrackModal = () => {
             const modal = document.getElementById("add-track-modal-dialog");
             modal.close();
+          }
+
+          const openErrorModal = () => {
+            const modal = document.getElementById("error-modal-dialog");
+            modal.showModal();
+          }
+
+          const closeErrorModal = () => {
+            location.reload();
           }
 
           const getTracks = async () => {
@@ -197,7 +224,7 @@
             getTracks();
           });
 
-          return { errorMessage, getTracks, errorButtonClick, openAddTrackModal, closeAddTrackModal, addTrack, trackList, streamingLinkInput, argentineTangoCheckbox, bachataCheckbox, boleroCheckbox, chaChaCheckbox, eastCoastSwingCheckbox, foxtrotCheckbox, hustleCheckbox, jiveCheckbox, lindyHopCheckbox, mamboCheckbox, merengueCheckbox, nightClub2StepCheckbox, pasoDobleCheckbox, peabodyCheckbox, quickstepCheckbox, rumbaCheckbox, salsaCheckbox, sambaCheckbox, tangoCheckbox, vienneseWaltzCheckbox, waltzCheckbox, westCoastSwingCheckbox };
+          return { errorMessage, getTracks, errorButtonClick, openAddTrackModal, closeAddTrackModal, closeErrorModal, addTrack, trackList, streamingLinkInput, argentineTangoCheckbox, bachataCheckbox, boleroCheckbox, chaChaCheckbox, eastCoastSwingCheckbox, foxtrotCheckbox, hustleCheckbox, jiveCheckbox, lindyHopCheckbox, mamboCheckbox, merengueCheckbox, nightClub2StepCheckbox, pasoDobleCheckbox, peabodyCheckbox, quickstepCheckbox, rumbaCheckbox, salsaCheckbox, sambaCheckbox, tangoCheckbox, vienneseWaltzCheckbox, waltzCheckbox, westCoastSwingCheckbox };
         },
       }).mount("#app");
     </script>
