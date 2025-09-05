@@ -34,10 +34,8 @@
         </dialog>
         <dialog id="add-track-modal-dialog">
           <article>
-            <header>
-              <button @click="closeAddTrackModal"class="secondary" style="float: right">Cancel</button>
-            </header>
             <form @submit.prevent="addTrack">
+              <button type="submit" id="add-track-button" class="add-track-button">Add Track</button>
               <input type="text" v-model="streamingLinkInput" name="streaming-link" placeholder="Streaming Link" required />
               <details class="dropdown">
                 <summary class="styles-dropdown-summary">Styles</summary>
@@ -110,7 +108,7 @@
                   </li>
                 </ul>
               </details>
-              <button type="submit" id="add-track-button" class="add-track-button" style="float: right;">Add Track</button>
+              <button @click="closeAddTrackModal"class="secondary" style="float: left">Cancel</button>
             </form>
           </article>
         </dialog>
