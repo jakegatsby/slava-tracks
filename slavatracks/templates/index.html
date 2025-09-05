@@ -108,8 +108,8 @@
                   </li>
                 </ul>
               </details>
-              <button @click="closeAddTrackModal"class="secondary" style="float: left">Cancel</button>
             </form>
+            <button @click="locationReload"class="secondary" style="float: left">Cancel</button>
           </article>
         </dialog>
         <section id="trackListSection">
@@ -156,7 +156,7 @@
           const waltzCheckbox = ref(null);
           const westCoastSwingCheckbox = ref(null);
 
-          const errorButtonClick = () => {
+          const locationReload = () => {
             location.reload();
           };
 
@@ -216,7 +216,7 @@
             getTracks();
           });
 
-          return { errorMessage, getTracks, errorButtonClick, openAddTrackModal, closeAddTrackModal, closeErrorModal, addTrack, trackList, streamingLinkInput, argentineTangoCheckbox, bachataCheckbox, boleroCheckbox, chaChaCheckbox, eastCoastSwingCheckbox, foxtrotCheckbox, hustleCheckbox, jiveCheckbox, lindyHopCheckbox, mamboCheckbox, merengueCheckbox, nightClub2StepCheckbox, pasoDobleCheckbox, peabodyCheckbox, quickstepCheckbox, rumbaCheckbox, salsaCheckbox, sambaCheckbox, tangoCheckbox, vienneseWaltzCheckbox, waltzCheckbox, westCoastSwingCheckbox };
+          return { errorMessage, getTracks, locationReload, openAddTrackModal, closeAddTrackModal, closeErrorModal, addTrack, trackList, streamingLinkInput, argentineTangoCheckbox, bachataCheckbox, boleroCheckbox, chaChaCheckbox, eastCoastSwingCheckbox, foxtrotCheckbox, hustleCheckbox, jiveCheckbox, lindyHopCheckbox, mamboCheckbox, merengueCheckbox, nightClub2StepCheckbox, pasoDobleCheckbox, peabodyCheckbox, quickstepCheckbox, rumbaCheckbox, salsaCheckbox, sambaCheckbox, tangoCheckbox, vienneseWaltzCheckbox, waltzCheckbox, westCoastSwingCheckbox };
         },
       }).mount("#app");
     </script>

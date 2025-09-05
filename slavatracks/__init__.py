@@ -5,6 +5,7 @@ import re
 import time
 from datetime import datetime, timedelta
 from typing import Annotated
+from urllib.parse import urlparse
 
 import requests
 import spotipy
@@ -17,12 +18,32 @@ from sqlalchemy import (Boolean, Column, DateTime, Integer, MetaData, String,
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import declarative_base, sessionmaker
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
 
 
 class StreamingPlatformNotSupported(Exception):
     pass
+
+
+class TrackMeta:
+    def __init__(self, platform, uuid, title, artist):
+        self.platform = platform
+        self.uuid = uuid
+        self.title = title
+        self.artist = artist
+        self.song_link_map = {
+            "tidal": "t",
+            "spotify": "s",
+            "youtube": "t",
+        }
+
+    @property
+    def song_link_url(self):
+        return f"https://song.link/{self.song_link_map[self.platform]}/{self.uuid}"
+
+    def __str__(self):
+        return f"{self.platform=}, {self.uuid=}, {self.title=}, {self.artist=}, {self.song_link_url=}"
 
 
 class TidalToken:
@@ -61,7 +82,7 @@ def tidal_api_request(url, token):
     return requests.get(url, headers=headers)
 
 
-def get_tidal_track_info(url):
+def get_tidal_track(url):
     track_match = re.search(r".*track/([0-9]*).*", url)
     if not track_match:
         raise StreamingPlatformNotSupported
@@ -81,31 +102,40 @@ def get_tidal_track_info(url):
         artist_info = tidal_api_request(api_url, token).json()
         artists.append(artist_info["data"]["attributes"]["name"])
     artist_str = ", ".join(artists)
-    return track_title, artist_str, url
+    return TrackMeta(
+        platform="tidal",
+        uuid=track_id,
+        title=track_title,
+        artist=artist_str
+    )
 
-
-def get_spotify_track_info(url):
+def get_spotify_track(url):
     auth_manager = SpotifyClientCredentials()
     sp = spotipy.Spotify(auth_manager=auth_manager)
     track = sp.track(url)
-    new_url = track["external_urls"].get("spotify") or url
-    return track["name"], ", ".join((a["name"] for a in track["artists"])), url
+    artist_str = ", ".join((a["name"] for a in track["artists"]))
+    return TrackMeta(
+        platform="spotify",
+        uuid=track["id"],
+        title=track["name"],
+        artist=artist_str
+    )
 
 
 def track_from_request_data(data):
     url = data["streaming_link"]
     if url.casefold().startswith("https://tidal.com"):
-        title, artist, url = get_tidal_track_info(url)
+        track_meta = get_tidal_track(url)
     elif url.casefold().startswith("https://open.spotify.com"):
-        title, artist, url = get_spotify_track_info(url)
+        track_meta = get_spotify_track(url)
     else:
         raise StreamingPlatformNotSupported
-    logger.info(f"{title}, {artist}, {url}")
+    logger.info(f"track_meta: {str(track_meta)}")
     data.update(
         {
-            "streaming_link": url,
-            "title": title,
-            "artist": artist,
+            "streaming_link": track_meta.song_link_url,
+            "title": track_meta.title,
+            "artist": track_meta.artist,
             "timestamp": datetime.now(),
         }
     )
