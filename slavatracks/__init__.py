@@ -4,6 +4,7 @@ import os
 import re
 import time
 from datetime import datetime, timedelta
+from statistics import mode
 from typing import Annotated
 from urllib.parse import urlparse
 
@@ -20,127 +21,6 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
-
-
-class StreamingPlatformNotSupported(Exception):
-    pass
-
-
-class TrackMeta:
-    def __init__(self, platform, uuid, title, artist):
-        self.platform = platform
-        self.uuid = uuid
-        self.title = title
-        self.artist = artist
-        self.song_link_map = {
-            "tidal": "t",
-            "spotify": "s",
-            "youtube": "t",
-        }
-
-    @property
-    def song_link_url(self):
-        return f"https://song.link/{self.song_link_map[self.platform]}/{self.uuid}"
-
-    def __str__(self):
-        return f"{self.platform=}, {self.uuid=}, {self.title=}, {self.artist=}, {self.song_link_url=}"
-
-
-class TidalToken:
-    def __init__(self, access_token, type, expires):
-        self.access_token = access_token
-        self.expires = expires
-        self.type = type
-
-    def is_expired(self):
-        return datetime.now() > self.expires
-
-    def __repr__(self):
-        return f"TidalToken({self.access_token}, {self.type}, {self.expires})"
-
-
-def get_tidal_token():
-    client_id = os.getenv("TIDALCLIENTID")
-    secret = os.getenv("TIDALSECRET")
-    if not (client_id and secret):
-        return None
-    data = {"grant_type": "client_credentials"}
-    r = requests.post(
-        "https://auth.tidal.com/v1/oauth2/token", auth=(client_id, secret), data=data
-    )
-    expires = (
-        datetime.now()
-        + timedelta(seconds=r.json()["expires_in"])
-        - timedelta(minutes=5)
-    )
-    logger.info(f"Got new token expiring {expires}")
-    return TidalToken(r.json()["access_token"], r.json()["token_type"], expires)
-
-
-def tidal_api_request(url, token):
-    headers = {"Authorization": f"Bearer {token.access_token}"}
-    return requests.get(url, headers=headers)
-
-
-def get_tidal_track(url):
-    track_match = re.search(r".*track/([0-9]*).*", url)
-    if not track_match:
-        raise StreamingPlatformNotSupported
-    track_id = track_match.groups()[0]
-    logger.info(f"TIDAL Track ID: {track_id}")
-    token = get_tidal_token()
-    api_url = (
-        f"https://openapi.tidal.com/v2/tracks/{track_id}?include=artists&countryCode=CA"
-    )
-    track_info = tidal_api_request(api_url, token).json()
-    track_title = track_info["data"]["attributes"]["title"]
-    artists = []
-    for artist_id in (
-        a["id"] for a in track_info["data"]["relationships"]["artists"]["data"]
-    ):
-        api_url = f"https://openapi.tidal.com/v2/artists/{artist_id}?countryCode=CA"
-        artist_info = tidal_api_request(api_url, token).json()
-        artists.append(artist_info["data"]["attributes"]["name"])
-    artist_str = ", ".join(artists)
-    return TrackMeta(
-        platform="tidal",
-        uuid=track_id,
-        title=track_title,
-        artist=artist_str
-    )
-
-def get_spotify_track(url):
-    auth_manager = SpotifyClientCredentials()
-    sp = spotipy.Spotify(auth_manager=auth_manager)
-    track = sp.track(url)
-    artist_str = ", ".join((a["name"] for a in track["artists"]))
-    return TrackMeta(
-        platform="spotify",
-        uuid=track["id"],
-        title=track["name"],
-        artist=artist_str
-    )
-
-
-def track_from_request_data(data):
-    url = data["streaming_link"]
-    if url.casefold().startswith("https://tidal.com"):
-        track_meta = get_tidal_track(url)
-    elif url.casefold().startswith("https://open.spotify.com"):
-        track_meta = get_spotify_track(url)
-    else:
-        raise StreamingPlatformNotSupported
-    logger.info(f"track_meta: {str(track_meta)}")
-    data.update(
-        {
-            "streaming_link": track_meta.song_link_url,
-            "title": track_meta.title,
-            "artist": track_meta.artist,
-            "timestamp": datetime.now(),
-        }
-    )
-    return Track(**data)
-
 
 STYLE_ATTRS = [
     "argentine_tango",
@@ -204,8 +84,13 @@ if DATABASE_URL:
         id = Column(Integer, primary_key=True)
         title = Column(String)
         artist = Column(String)
-        streaming_link = Column(String)
+        share_url = Column(String)
         timestamp = Column(DateTime)
+        tidal_url = Column(String, default=None)
+        spotify_url = Column(String, default=None)
+        youtube_url = Column(String, default=None)
+        apple_music_url = Column(String, default=None)
+        itunes_url = Column(String, default=None)
         argentine_tango = Column(Boolean, default=False)
         bachata = Column(Boolean, default=False)
         bolero = Column(Boolean, default=False)
@@ -243,8 +128,13 @@ if DATABASE_URL:
                 "id": self.id,
                 "title": self.title,
                 "artist": self.artist,
-                "streaming_link": self.streaming_link,
-                "timestamp": str(self.timestamp),
+                "timestamp": str(self.timestamp).split()[0],
+                "share_url": self.share_url,
+                "tidal_url": self.tidal_url,
+                "spotify_url": self.spotify_url,
+                "youtube_url": self.youtube_url,
+                "apple_music_url": self.apple_music_url,
+                "itunes_url": self.itunes_url,
                 "prettified_styles": self.prettified_styles(),
                 "argentine_tango": bool(self.argentine_tango),
                 "bachata": bool(self.bachata),
@@ -282,6 +172,27 @@ def tracks_to_json(session):
         )
     )
 
+def track_from_request_data(data):
+    params = {"url": data["share_url"], "userCountry": "CA", "songIfSingle": "true"}
+    r = requests.get("https://api.song.link/v1-alpha.1/links", params=params)
+    titles = []
+    artists = []
+    track = Track(**data)
+    for platform, track_data in r.json()["entitiesByUniqueId"].items():
+        titles.append(track_data["title"])
+        artists.append(track_data["artistName"])
+    track.title = mode(titles)
+    track.artist = mode(artists)
+    for platform, track_data in r.json()["linksByPlatform"].items():
+        if platform == "tidal":
+            track.tidal_url = track_data["url"]
+        elif platform == "spotify":
+            track.spotify_url = track_data["url"]
+        elif platform == "youtube":
+            track.youtube_url = track_data["url"]
+    track.timestamp = datetime.now()
+    return track
+
 
 def create_app():
     app = Flask(__name__)
@@ -317,7 +228,7 @@ def create_app():
             if isinstance(e.orig, UniqueViolation):
                 if "_title_artist_uc" in str(e.orig):
                     return {"error": "This track has already been added"}
-        elif isinstance(e, StreamingPlatformNotSupported):
-            return {"error": "This streaming platform URL is not supported"}
+        #elif isinstance(e, StreamingPlatformNotSupported):  # FIXME - replace with can't find song.link ????
+        #    return {"error": "This streaming platform URL is not supported"}
 
     return app

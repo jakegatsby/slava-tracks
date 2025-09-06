@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SLAVATRACKS</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.violet.min.css" />
-    <link rel="stylesheet" href="/static/main.css" />
+    <link rel="stylesheet" href="/static/css/main.css" />
     <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
@@ -35,8 +35,10 @@
         <dialog id="add-track-modal-dialog">
           <article>
             <form @submit.prevent="addTrack">
-              <button type="submit" id="add-track-button" class="add-track-button">Add Track</button>
-              <input type="text" v-model="streamingLinkInput" name="streaming-link" placeholder="Streaming Link" required />
+              <fieldset role="group">
+                <input type="text" v-model="shareUrlInput" name="streaming-link" placeholder="Share Track Link" required />
+                <button type="submit" id="add-track-button" class="add-track-button">Submit</button>
+              </fieldset>
               <details class="dropdown">
                 <summary class="styles-dropdown-summary">Styles</summary>
                 <ul>
@@ -116,11 +118,19 @@
           <article class="track-container" v-for="track in trackList" data-aos="zoom-in-down" data-aos-anchor-placement="top-bottom" data-aos-duration="800">
             <div class="trackTitle">{{ track.title }}</div>
             <div class="trackArtist">{{ track.artist }}</div>
-            <div v-if="track.streaming_link" class="trackStreamingLink">
-              <a :href="track.streaming_link">{{ track.streaming_link }}</a>
-            </div>
             <div v-if="track.prettified_styles" class="trackPrettifiedStyles">{{ track.prettified_styles }}</div>
             <div class="trackTimestamp">Added: {{ track.timestamp }}</div>
+            <div class="grid platform-links-container">
+              <div v-if="track.spotify_url" class="trackStreamingLink">
+                <a :href="track.spotify_url"><div><img class="platform-logo" src="/static/img/spotify.svg" /></div><div>Spotify</div></a>
+              </div>
+              <div v-if="track.tidal_url" class="trackStreamingLink">
+                <a :href="track.tidal_url"><div><img class="platform-logo" src="/static/img/tidal.svg" /></div><div>Tidal</div></a>
+              </div>
+              <div v-if="track.youtube_url" class="trackStreamingLink">
+                <a :href="track.youtube_url"><div><img class="platform-logo" src="/static/img/youtube.svg" /></div><div>YouTube</div></a>
+              </div>
+            </div>
           </article>
         </section>
       </main>
@@ -131,7 +141,7 @@
       createApp({
         setup() {
           const errorMessage = ref(null);
-          const streamingLinkInput = ref(null);
+          const shareUrlInput = ref(null);
           const trackList = ref([]);
           const argentineTangoCheckbox = ref(null);
           const bachataCheckbox = ref(null);
@@ -163,7 +173,7 @@
           const addTrack = async () => {
             closeAddTrackModal();
             try {
-              const response = await axios.post("/tracks/", { streaming_link: streamingLinkInput.value, argentine_tango: argentineTangoCheckbox.value, bachata: bachataCheckbox.value, bolero: boleroCheckbox.value, cha_cha: chaChaCheckbox.value, east_coast_swing: eastCoastSwingCheckbox.value, foxtrot: foxtrotCheckbox.value, hustle: hustleCheckbox.value, jive: jiveCheckbox.value, lindy_hop: lindyHopCheckbox.value, mambo: mamboCheckbox.value, merengue: merengueCheckbox.value, night_club_2_step: nightClub2StepCheckbox.value, paso_doble: pasoDobleCheckbox.value, peabody: peabodyCheckbox.value, quickstep: quickstepCheckbox.value, rumba: rumbaCheckbox.value, salsa: salsaCheckbox.value, samba: sambaCheckbox.value, tango: tangoCheckbox.value, viennese_waltz: vienneseWaltzCheckbox.value, waltz: waltzCheckbox.value, west_coast_swing: westCoastSwingCheckbox.value });
+              const response = await axios.post("/tracks/", { share_url: shareUrlInput.value, argentine_tango: argentineTangoCheckbox.value, bachata: bachataCheckbox.value, bolero: boleroCheckbox.value, cha_cha: chaChaCheckbox.value, east_coast_swing: eastCoastSwingCheckbox.value, foxtrot: foxtrotCheckbox.value, hustle: hustleCheckbox.value, jive: jiveCheckbox.value, lindy_hop: lindyHopCheckbox.value, mambo: mamboCheckbox.value, merengue: merengueCheckbox.value, night_club_2_step: nightClub2StepCheckbox.value, paso_doble: pasoDobleCheckbox.value, peabody: peabodyCheckbox.value, quickstep: quickstepCheckbox.value, rumba: rumbaCheckbox.value, salsa: salsaCheckbox.value, samba: sambaCheckbox.value, tango: tangoCheckbox.value, viennese_waltz: vienneseWaltzCheckbox.value, waltz: waltzCheckbox.value, west_coast_swing: westCoastSwingCheckbox.value });
               console.log(response);
               if ("error" in response.data) {
                 console.log(response.data.error);
@@ -216,7 +226,7 @@
             getTracks();
           });
 
-          return { errorMessage, getTracks, locationReload, openAddTrackModal, closeAddTrackModal, closeErrorModal, addTrack, trackList, streamingLinkInput, argentineTangoCheckbox, bachataCheckbox, boleroCheckbox, chaChaCheckbox, eastCoastSwingCheckbox, foxtrotCheckbox, hustleCheckbox, jiveCheckbox, lindyHopCheckbox, mamboCheckbox, merengueCheckbox, nightClub2StepCheckbox, pasoDobleCheckbox, peabodyCheckbox, quickstepCheckbox, rumbaCheckbox, salsaCheckbox, sambaCheckbox, tangoCheckbox, vienneseWaltzCheckbox, waltzCheckbox, westCoastSwingCheckbox };
+          return { errorMessage, getTracks, locationReload, openAddTrackModal, closeAddTrackModal, closeErrorModal, addTrack, trackList, shareUrlInput, argentineTangoCheckbox, bachataCheckbox, boleroCheckbox, chaChaCheckbox, eastCoastSwingCheckbox, foxtrotCheckbox, hustleCheckbox, jiveCheckbox, lindyHopCheckbox, mamboCheckbox, merengueCheckbox, nightClub2StepCheckbox, pasoDobleCheckbox, peabodyCheckbox, quickstepCheckbox, rumbaCheckbox, salsaCheckbox, sambaCheckbox, tangoCheckbox, vienneseWaltzCheckbox, waltzCheckbox, westCoastSwingCheckbox };
         },
       }).mount("#app");
     </script>

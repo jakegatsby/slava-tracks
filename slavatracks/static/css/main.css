@@ -6,7 +6,7 @@ html, body {
 }
 
 html {
-    background-image: url('/static/background.jpg');
+    background-image: url('/static/img/background.jpg');
     background-repeat: no-repeat; /* Prevent the image from repeating */
     background-attachment: fixed; /* Fix the image in the viewport */
     background-position: center center; /* Center the image horizontally and vertically */
@@ -65,6 +65,15 @@ a {
 .trackStreamingLink, .trackPrettifiedStyles, .trackTimestamp {
     color: #aaa;
     font-size: 1rem;
+}
+
+.platform-links-container {
+    margin-top: 1rem;
+}
+
+.platform-logo {
+    height: 2rem;
+    width: 2rem;
 }
 
 dialog[open] { /* Target the open dialog element */

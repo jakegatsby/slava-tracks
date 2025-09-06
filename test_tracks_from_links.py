@@ -7,6 +7,6 @@ URLS = [
 
 for url in URLS:
     data = {
-        "streaming_link": url
+        "share_url": url
     }
     slavatracks.track_from_request_data(data)

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   fill="none"
+   viewBox="0 0 24 24"
+   id="Tidal-Logo--Streamline-Logos-Block"
+   height="24"
+   width="24"
+   version="1.1"
+   sodipodi:docname="tidal.svg"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs9" />
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false"
+     inkscape:zoom="32.708333"
+     inkscape:cx="12.015287"
+     inkscape:cy="12.030573"
+     inkscape:window-width="1920"
+     inkscape:window-height="1011"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="Tidal-Logo--Streamline-Logos-Block" />
+  <desc
+     id="desc2">
+    Tidal Logo Streamline Icon: https://streamlinehq.com
+  </desc>
+  <path
+     fill="#000000"
+     fill-rule="evenodd"
+     d="M5 1a4 4 0 0 0 -4 4v14a4 4 0 0 0 4 4h14a4 4 0 0 0 4 -4V5a4 4 0 0 0 -4 -4H5ZM4 9.833l2.667 -2.667 2.666 2.667L6.667 12.5 4 9.833Zm10.667 0L12 7.166 9.333 9.834 12 12.5l-2.667 2.666L12 17.834l2.667 -2.666L12 12.5l2.667 -2.667Zm0 0 2.666 -2.667L20 9.834 17.333 12.5l-2.666 -2.667Z"
+     clip-rule="evenodd"
+     stroke-width="1"
+     id="path4" />
+  <path
+     style="fill:#ffffff;stroke-width:0.0305732"
+     d="M 5.3503185,11.143949 4.0359354,9.8292994 5.3503192,8.5146489 6.6647031,7.1999985 7.9718418,8.5068723 c 0.7189266,0.7187806 1.3071391,1.3207524 1.3071391,1.3377152 0,0.03022 -2.5689463,2.6140115 -2.5989928,2.6140115 -0.00841,0 -0.606759,-0.591593 -1.3296696,-1.31465 z"
+     id="path184" />
+  <path
+     style="fill:#ffffff;stroke-width:0.0305732"
+     d="M 10.670019,11.143904 9.3555915,9.8292102 10.677796,8.507006 12,7.1848017 13.322204,8.507006 14.644408,9.8292102 13.329981,11.143904 C 12.607046,11.866986 12.008554,12.458599 12,12.458599 c -0.0086,0 -0.607046,-0.591613 -1.329981,-1.314695 z"
+     id="path186" />
+  <path
+     style="fill:#ffffff;stroke-width:0.0305732"
+     d="m 16.007674,11.140796 -1.296785,-1.316387 1.311982,-1.3122491 1.311983,-1.312249 1.31465,1.3146496 1.31465,1.3146497 -1.314428,1.3146938 c -0.722935,0.723082 -1.321366,1.314376 -1.329847,1.313987 -0.0085,-3.88e-4 -0.598974,-0.593082 -1.312205,-1.317095 z"
+     id="path188" />
+  <path
+     style="fill:#ffffff;stroke-width:0.0305732"
+     d="M 10.677573,16.471205 9.3706991,15.164066 10.68535,13.849682 12,12.535298 l 1.31465,1.314384 1.314651,1.314384 -1.306874,1.307139 C 12.603646,17.190131 12.008554,17.778344 12,17.778344 c -0.0086,0 -0.603646,-0.588213 -1.322427,-1.307139 z"
+     id="path190" />
+</svg>
