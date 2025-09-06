@@ -172,6 +172,7 @@ def tracks_to_json(session):
         )
     )
 
+
 def track_from_request_data(data):
     params = {"url": data["share_url"], "userCountry": "CA", "songIfSingle": "true"}
     r = requests.get("https://api.song.link/v1-alpha.1/links", params=params)
@@ -228,7 +229,7 @@ def create_app():
             if isinstance(e.orig, UniqueViolation):
                 if "_title_artist_uc" in str(e.orig):
                     return {"error": "This track has already been added"}
-        #elif isinstance(e, StreamingPlatformNotSupported):  # FIXME - replace with can't find song.link ????
+        # elif isinstance(e, StreamingPlatformNotSupported):  # FIXME - replace with can't find song.link ????
         #    return {"error": "This streaming platform URL is not supported"}
 
     return app

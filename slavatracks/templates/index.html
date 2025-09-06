@@ -21,14 +21,12 @@
 
       <main class="container">
         <div class="open-add-track-modal-button-container">
-          <button @click="openAddTrackModal" >Add a new track</button>
+          <button @click="openAddTrackModal">Add a new track</button>
         </div>
         <dialog id="error-modal-dialog">
           <article id="error-modal-article">
-            <div style="text-align: center; color: black;">ERROR</div>
-            <p style="text-align: center; color: black;">
-              {{ errorMessage }}
-            </p>
+            <div style="text-align: center; color: black">ERROR</div>
+            <p style="text-align: center; color: black">{{ errorMessage }}</p>
             <button @click="closeErrorModal" class="secondary">Close</button>
           </article>
         </dialog>
@@ -111,7 +109,7 @@
                 </ul>
               </details>
             </form>
-            <button @click="locationReload"class="secondary" style="float: left">Cancel</button>
+            <button @click="locationReload" class="secondary" style="float: left">Cancel</button>
           </article>
         </dialog>
         <section id="trackListSection">
@@ -122,13 +120,22 @@
             <div class="trackTimestamp">Added: {{ track.timestamp }}</div>
             <div class="grid platform-links-container">
               <div v-if="track.spotify_url" class="trackStreamingLink">
-                <a :href="track.spotify_url"><div><img class="platform-logo" src="/static/img/spotify.svg" /></div><div>Spotify</div></a>
+                <a :href="track.spotify_url"
+                  ><div><img class="platform-logo" src="/static/img/spotify.svg" /></div>
+                  <div>Spotify</div></a
+                >
               </div>
               <div v-if="track.tidal_url" class="trackStreamingLink">
-                <a :href="track.tidal_url"><div><img class="platform-logo" src="/static/img/tidal.svg" /></div><div>Tidal</div></a>
+                <a :href="track.tidal_url"
+                  ><div><img class="platform-logo" src="/static/img/tidal.svg" /></div>
+                  <div>Tidal</div></a
+                >
               </div>
               <div v-if="track.youtube_url" class="trackStreamingLink">
-                <a :href="track.youtube_url"><div><img class="platform-logo" src="/static/img/youtube.svg" /></div><div>YouTube</div></a>
+                <a :href="track.youtube_url"
+                  ><div><img class="platform-logo" src="/static/img/youtube.svg" /></div>
+                  <div>YouTube</div></a
+                >
               </div>
             </div>
           </article>
@@ -192,26 +199,26 @@
           const openAddTrackModal = () => {
             const modal = document.getElementById("add-track-modal-dialog");
             modal.showModal();
-          }
+          };
 
           const closeAddTrackModal = () => {
             const modal = document.getElementById("add-track-modal-dialog");
             modal.close();
-          }
+          };
 
           const openErrorModal = () => {
             const modal = document.getElementById("error-modal-dialog");
             modal.showModal();
-          }
+          };
 
           const closeErrorModal = () => {
             location.reload();
-          }
+          };
 
           const getTracks = async () => {
             const response = await axios.get("/tracks/");
             trackList.value = response.data;
-          }
+          };
 
           onMounted(async () => {
             console.log("MOUNTED");
