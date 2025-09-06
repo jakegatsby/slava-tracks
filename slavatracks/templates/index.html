@@ -12,13 +12,13 @@
   </head>
   <body>
     <div id="app">
+      <div id="progressIndicator"><progress /></div>
       <header class="container site-banner">
         <hgroup>
           <a href="/"><h1 class="site-title">SLAVATRACKS</h1></a>
           <p>Playlist Recommendations</p>
         </hgroup>
       </header>
-
       <main class="container">
         <div class="open-add-track-modal-button-container">
           <button @click="openAddTrackModal">Add a new track</button>
@@ -179,8 +179,19 @@
             location.reload();
           };
 
+          const showProgressIndicator = () => {
+            const progressIndicator = document.getElementById("progressIndicator");
+            progressIndicator.style.display = 'block';
+          }
+
+          const hideProgressIndicator = () => {
+            const progressIndicator = document.getElementById("progressIndicator");
+            progressIndicator.style.display = 'none';
+          }
+
           const addTrack = async () => {
             closeAddTrackModal();
+            showProgressIndicator();
             try {
               const response = await axios.post("/tracks/", { share_url: shareUrlInput.value, argentine_tango: argentineTangoCheckbox.value, bachata: bachataCheckbox.value, bolero: boleroCheckbox.value, cha_cha: chaChaCheckbox.value, east_coast_swing: eastCoastSwingCheckbox.value, foxtrot: foxtrotCheckbox.value, hustle: hustleCheckbox.value, jive: jiveCheckbox.value, lindy_hop: lindyHopCheckbox.value, mambo: mamboCheckbox.value, merengue: merengueCheckbox.value, night_club_2_step: nightClub2StepCheckbox.value, paso_doble: pasoDobleCheckbox.value, peabody: peabodyCheckbox.value, quickstep: quickstepCheckbox.value, rumba: rumbaCheckbox.value, salsa: salsaCheckbox.value, samba: sambaCheckbox.value, tango: tangoCheckbox.value, viennese_waltz: vienneseWaltzCheckbox.value, waltz: waltzCheckbox.value, west_coast_swing: westCoastSwingCheckbox.value });
               console.log(response);
@@ -218,8 +229,10 @@
           };
 
           const getTracks = async () => {
+            showProgressIndicator();
             const response = await axios.get("/tracks/");
             trackList.value = response.data;
+            hideProgressIndicator();
           };
 
           onMounted(async () => {
@@ -235,7 +248,7 @@
             getTracks();
           });
 
-          return { errorMessage, getTracks, locationReload, openAddTrackModal, closeAddTrackModal, closeErrorModal, addTrack, trackList, shareUrlInput, argentineTangoCheckbox, bachataCheckbox, boleroCheckbox, chaChaCheckbox, eastCoastSwingCheckbox, foxtrotCheckbox, hustleCheckbox, jiveCheckbox, lindyHopCheckbox, mamboCheckbox, merengueCheckbox, nightClub2StepCheckbox, pasoDobleCheckbox, peabodyCheckbox, quickstepCheckbox, rumbaCheckbox, salsaCheckbox, sambaCheckbox, tangoCheckbox, vienneseWaltzCheckbox, waltzCheckbox, westCoastSwingCheckbox };
+          return { errorMessage, showProgressIndicator, hideProgressIndicator, locationReload, openAddTrackModal, closeAddTrackModal, closeErrorModal, addTrack, trackList, shareUrlInput, argentineTangoCheckbox, bachataCheckbox, boleroCheckbox, chaChaCheckbox, eastCoastSwingCheckbox, foxtrotCheckbox, hustleCheckbox, jiveCheckbox, lindyHopCheckbox, mamboCheckbox, merengueCheckbox, nightClub2StepCheckbox, pasoDobleCheckbox, peabodyCheckbox, quickstepCheckbox, rumbaCheckbox, salsaCheckbox, sambaCheckbox, tangoCheckbox, vienneseWaltzCheckbox, waltzCheckbox, westCoastSwingCheckbox };
         },
       }).mount("#app");
     </script>
