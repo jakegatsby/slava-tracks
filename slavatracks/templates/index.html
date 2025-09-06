@@ -33,10 +33,6 @@
         <dialog id="add-track-modal-dialog">
           <article>
             <form @submit.prevent="addTrack">
-              <fieldset role="group">
-                <input type="text" v-model="shareUrlInput" name="streaming-link" placeholder="Share Track Link" required />
-                <button type="submit" id="add-track-button" class="add-track-button">Submit</button>
-              </fieldset>
               <details class="dropdown">
                 <summary class="styles-dropdown-summary">Styles</summary>
                 <ul>
@@ -108,8 +104,14 @@
                   </li>
                 </ul>
               </details>
+              <fieldset role="group">
+                <input type="text" v-model="shareUrlInput" name="streaming-link" placeholder="Track Link" required />
+                <button type="submit" id="add-track-button" class="add-track-button">Submit</button>
+              </fieldset>
             </form>
-            <button @click="locationReload" class="secondary" style="float: left">Cancel</button>
+            <footer>
+              <button @click="locationReload" class="secondary" style="float: left">Cancel</button>
+            </footer>
           </article>
         </dialog>
         <section id="trackListSection">
@@ -117,7 +119,7 @@
             <div class="trackTitle">{{ track.title }}</div>
             <div class="trackArtist">{{ track.artist }}</div>
             <div v-if="track.prettified_styles" class="trackPrettifiedStyles">{{ track.prettified_styles }}</div>
-            <div class="trackTimestamp">Added: {{ track.timestamp }}</div>
+            <div class="trackTimestamp">Added: {{ track.timestamp_day }}</div>
             <div class="grid platform-links-container">
               <div v-if="track.spotify_url" class="trackStreamingLink">
                 <a :href="track.spotify_url"
