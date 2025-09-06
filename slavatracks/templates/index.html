@@ -120,7 +120,7 @@
             <div class="trackArtist">{{ track.artist }}</div>
             <div v-if="track.prettified_styles" class="trackPrettifiedStyles">{{ track.prettified_styles }}</div>
             <div class="trackTimestamp">Added: {{ track.timestamp_day }}</div>
-            <div class="grid platform-links-container">
+            <fieldset role="group" class="platform-links-container">
               <div v-if="track.spotify_url" class="trackStreamingLink">
                 <a :href="track.spotify_url"
                   ><div><img class="platform-logo" src="/static/img/spotify.svg" /></div>
@@ -139,7 +139,7 @@
                   <div>YouTube</div></a
                 >
               </div>
-            </div>
+            </fieldset>
           </article>
         </section>
       </main>
