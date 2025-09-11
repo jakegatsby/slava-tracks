@@ -25,3 +25,5 @@ run: ip
 tests:
 	DATABASE_URL=postgresql://postgres:mysecretpassword@localhost:5432/postgres ./venv/bin/python test_tracks_from_links.py
 
+json-backup:
+	curl -s https://slava-tracks.up.railway.app/tracks/ | jq . > backups/tracks-$$(date -Is).json

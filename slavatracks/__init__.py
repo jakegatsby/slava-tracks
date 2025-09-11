@@ -217,6 +217,7 @@ def create_app():
     @app.route("/tracks/", methods=["POST"])
     def add_track():
         data = request.json
+        logger.info(f"Request Data: {data}")
         track = track_from_request_data(data)
         with Session.begin() as session:
             session.add(track)
